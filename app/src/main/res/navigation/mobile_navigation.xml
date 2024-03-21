@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="au.com.talentwars.ui.popular.PopularMoviesFragment"
+        android:label="@string/title_popular_movies"/>
+
+    <fragment
+        android:id="@+id/navigation_dashboard"
+        android:name="au.com.talentwars.ui.movies.SourcesFragment"
+        android:label="@string/title_sources" />
+
+    <fragment
+        android:id="@+id/navigation_notifications"
+        android:name="au.com.talentwars.ui.saved.SavedFragment"
+        android:label="@string/title_saved" />
+</navigation>
