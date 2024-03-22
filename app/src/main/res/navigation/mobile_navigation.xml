@@ -11,7 +11,7 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="au.com.talentwars.ui.movies.SourcesFragment"
+        android:name="au.com.talentwars.ui.details.DetailsMoviesFragment"
         android:label="@string/title_sources" />
 
     <fragment

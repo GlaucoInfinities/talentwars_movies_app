@@ -34,6 +34,7 @@ class PopularMoviesViewModel @Inject constructor(
     private var genresList = mutableListOf<Genres>()
 
     init {
+        _uiState.value = PopularMoviesUiState.Loading
         loadPopularGenres()
     }
 

@@ -1,11 +1,10 @@
 package au.com.talentwars.ui.components
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import au.com.talentwars.ui.details.DetailsMoviesScreen
 import au.com.talentwars.ui.popular.PopularMoviesScreen
 import au.com.talentwars.ui.saved.SavedScreen
 
@@ -19,27 +18,34 @@ fun Navigation(startDestination: String) {
         composable(route = Screen.SavedScreen.route) {
             SavedScreen(navController)
         }
-        composable(
-            route = Screen.DetailScreen.route +
-                    "/{${Arguments.SAVED_KEY}}/{${Arguments.TITLE_KEY}}/{${Arguments.ARTICLE_KEY}}",
+        composable(route = Screen.DetailScreen.route) {
+            DetailsMoviesScreen(navController)
+        }
+        /*composable(
+            route = Screen.DetailScreen.route,
+                    //+
+                    //"/{${Arguments.SAVED_KEY}}/{${Arguments.TITLE_KEY}}/{${Arguments.ARTICLE_KEY}}",
             arguments = listOf(
                 navArgument(Arguments.SAVED_KEY) {
-                    type = NavType.BoolType
-                    nullable = false
+                    //type = NavType.BoolType
+                    //nullable = false
                 },
                 navArgument(Arguments.TITLE_KEY) {
-                    type = NavType.StringType
-                    nullable = false
+                    //type = NavType.StringType
+                    //nullable = false
                 },
                 navArgument(Arguments.ARTICLE_KEY) {
-                    type = NavType.StringType
-                    nullable = false
+                   // type = NavType.StringType
+                    //nullable = false
                 }
             )
         ) { entry ->
-            val alreadySaved = entry.arguments?.getBoolean(Arguments.SAVED_KEY, false) ?: false
-            val argument = entry.arguments?.getString(Arguments.ARTICLE_KEY)
-        }
+            //val alreadySaved = entry.arguments?.getBoolean(Arguments.SAVED_KEY, false) ?: false
+            //val argument = entry.arguments?.getString(Arguments.ARTICLE_KEY)
+            //val article = Gson().fromJson(argument, Article::class.java)
+            //ArticleDetailScreen(navController, article, alreadySaved)
+            ArticleDetailScreen(navController)
+        }*/
     }
 }
 

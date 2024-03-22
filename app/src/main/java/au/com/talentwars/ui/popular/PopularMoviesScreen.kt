@@ -124,7 +124,7 @@ fun PopularMoviesScreen(navController: NavHostController) {
                 Box(
                     contentAlignment = Alignment.Center, modifier = Modifier.padding(all = 8.dp)
                 ) {
-                    CenteredCircularProgressIndicator()
+                    CenteredCircularProgressIndicator(color = green)
                 }
             }
 
@@ -143,9 +143,14 @@ fun PopularMoviesScreen(navController: NavHostController) {
                         PopularMovieCompose(
                             movie,
                         ) {
-                            val jsonArgs = Uri.encode(Gson().toJson(movie))
+                            /*val jsonArgs = Uri.encode(Gson().toJson(movie))
                             navController.navigate(
                                 route = Screen.DetailScreen.route + "/false/${movie.title}/$jsonArgs"
+                            )*/
+
+                            //val jsonArgs = Uri.encode(Gson().toJson(movie))
+                            navController.navigate(
+                                route = Screen.DetailScreen.route
                             )
                         }
                         if (index == list.size - 1 && !viewModel.isLoading) {
@@ -211,8 +216,9 @@ fun TitleText(text: String) {
 }
 
 @Composable
-fun CenteredCircularProgressIndicator() = CircularProgressIndicator(
-    Modifier
+fun CenteredCircularProgressIndicator(color: Color) = CircularProgressIndicator(
+    color = color,
+    modifier = Modifier
         .fillMaxSize()
         .wrapContentSize(Alignment.Center)
 )

@@ -39,13 +39,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import au.com.talentwars.R
 import au.com.talentwars.data.model.Genres
 import au.com.talentwars.data.model.Movies
-import au.com.talentwars.ui.PopularMoviesUiState
 import au.com.talentwars.ui.popular.PopularMoviesViewModel
 import au.com.talentwars.ui.theme.TalentwarsTheme
 import coil.ImageLoader
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import kotlinx.coroutines.flow.first
 
 
 @Composable
