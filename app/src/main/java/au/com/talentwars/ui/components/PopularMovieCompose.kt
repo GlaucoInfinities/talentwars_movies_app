@@ -1,7 +1,9 @@
 package au.com.talentwars.ui.components
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,7 +17,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -28,16 +35,27 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import au.com.talentwars.R
+import au.com.talentwars.data.model.Genres
 import au.com.talentwars.data.model.Movies
+import au.com.talentwars.ui.PopularMoviesUiState
+import au.com.talentwars.ui.popular.PopularMoviesViewModel
 import au.com.talentwars.ui.theme.TalentwarsTheme
 import coil.ImageLoader
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import kotlinx.coroutines.flow.first
 
 
 @Composable
-fun PopularMovieCompose(movie: Movies,calculatePercent: (Double) -> Int,getMovieYear: (String) -> String, onClick: () -> Unit) {
+fun PopularMovieCompose(
+    movie: Movies,
+    onClick: () -> Unit
+) {
+
+    val popularMoviesViewModel: PopularMoviesViewModel = hiltViewModel()
+
     //IMAGE CACHED
     val context = LocalContext.current
     val imageLoader =
@@ -62,7 +80,7 @@ fun PopularMovieCompose(movie: Movies,calculatePercent: (Double) -> Int,getMovie
 
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            containerColor =  colorResource(id = R.color.white),
         ),
         modifier = Modifier
             .fillMaxWidth()
@@ -93,18 +111,19 @@ fun PopularMovieCompose(movie: Movies,calculatePercent: (Double) -> Int,getMovie
                         text = movie.title ?: "",
                         style = textStyleBold,
                         fontSize = 16.sp,
+                        maxLines = 1,
                         color = Color.Black
                     )
                     Text(
                         modifier = Modifier.padding(0.dp, 5.dp),
-                        text = getMovieYear(movie.release_date) ?: "",
+                        text = popularMoviesViewModel.getMovieYear(movie.release_date) ?: "",
                         style = textStyleRegular,
                         color = lightGreyColor,
                     )
                     Row {
                         Text(
                             modifier = Modifier.padding(end = 7.dp),
-                            text = "${calculatePercent(movie.vote_average)}%",
+                            text = "${popularMoviesViewModel.calculatePercent(movie.vote_average)}%",
                             style = textStyleBold,
                             fontSize = 12.sp,
                         )
@@ -114,8 +133,39 @@ fun PopularMovieCompose(movie: Movies,calculatePercent: (Double) -> Int,getMovie
                             fontSize = 12.sp,
                         )
                     }
+
+                    HorizontalGenres(popularMoviesViewModel.getMovieGenres(movie.genre_ids))
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun HorizontalGenres(items: List<Genres>) {
+    val fontFamily = FontFamily(Font(R.font.inter_regular))
+    val textStyle = TextStyle(
+        fontFamily = fontFamily,
+        fontSize = 12.sp,
+        color = colorResource(id = R.color.grey_200),
+    )
+    Row(
+        modifier = Modifier.fillMaxHeight().fillMaxWidth(),
+        verticalAlignment = Alignment.Bottom
+    ) {
+        items.take(3).forEach { text ->
+            Text(
+                text = text.name,
+                style = textStyle,
+                maxLines = 1,
+                modifier = Modifier
+                    .padding(end = 12.dp)
+                    .background(
+                        color = colorResource(id = R.color.grey_100),
+                        shape = RoundedCornerShape(30.dp)
+                    )
+                    .padding(horizontal = 6.dp, vertical = 3.dp)
+            )
         }
     }
 }
@@ -145,9 +195,5 @@ fun PopularMoviesPreview() {
             ),
         ) {}
     }
-}
-
-fun PopularMovieCompose(movie: Movies, onClick: () -> Unit) {
-
 }
 

@@ -11,13 +11,7 @@
     <color name="green_top_bar_text">#FF347868</color>
     <color name="black">#FF000000</color>
     <color name="grey_200">#FF959595</color>
-
-
-
-  <!--  val GreenTopBar = Color(0xFF8DEAA2)
-    val GreenTitle = Color(0xFF347868)
-    val GreyShapeRounded = Color(0xFFE6E6E6)
-    val GreyShapeRoundedText = Color(0xFF959595)-->
+    <color name="grey_100">#FFE6E6E6</color>
 
 
 </resources>

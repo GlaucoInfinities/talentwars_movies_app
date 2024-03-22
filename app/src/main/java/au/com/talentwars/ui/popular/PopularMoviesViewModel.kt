@@ -8,7 +8,6 @@ import au.com.talentwars.data.model.Genres
 import au.com.talentwars.data.model.Movies
 import au.com.talentwars.ui.PopularMoviesUiState
 import au.com.talentwars.util.Utils
-
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -17,15 +16,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class PopularMoviesViewModel @Inject constructor(
     private val moviesRepository: MoviesRepository,
     private val genresRepository: GenresRepository
-    ) : ViewModel() {
+) : ViewModel() {
 
     private val _uiState: MutableStateFlow<PopularMoviesUiState> =
         MutableStateFlow(PopularMoviesUiState.Initial)
@@ -34,9 +31,25 @@ class PopularMoviesViewModel @Inject constructor(
     private var currentPage = 1
     var isLoading = false
     private val moviesList = mutableListOf<Movies>()
+    private var genresList = mutableListOf<Genres>()
 
     init {
-        loadPopularMovies(currentPage)
+        loadPopularGenres()
+    }
+
+    private fun loadPopularGenres() {
+        viewModelScope.launch(Dispatchers.IO) {
+            genresRepository.loadGenresFromServer(
+                onSuccess = { genres ->
+                    viewModelScope.launch {
+                        genresList.addAll(genres)
+                        loadPopularMovies(currentPage)
+                    }
+                },
+                onError = { error ->
+                }
+            )
+        }
     }
 
     private fun loadPopularMovies(page: Int) {
@@ -55,22 +68,6 @@ class PopularMoviesViewModel @Inject constructor(
                     isLoading = false
                 }
             )
-            val genresFlow: Flow<List<Genres>> = genresRepository.allGenresFromDataBase
-            val genresList = genresFlow.firstOrNull()
-
-            if (genresList.isNullOrEmpty()) {
-                genresRepository.loadGenresFromServer(
-                    onSuccess = { genres ->
-                        //_uiState.value = PopularMoviesUiState.Success(moviesList.toList())
-                        viewModelScope.launch {
-                            genresRepository.insert(genres)
-                        }
-                    },
-                    onError = { error ->
-                        // _uiState.value = PopularMoviesUiState.Error(error)
-                    }
-                )
-            }
         }
     }
 
@@ -85,5 +82,9 @@ class PopularMoviesViewModel @Inject constructor(
 
     fun getMovieYear(dateString: String): String {
         return Utils.movieYear(dateString)
+    }
+
+    fun getMovieGenres(ids: List<Int>): List<Genres> {
+        return genresList.filter { ids.contains(it.id) }
     }
 }

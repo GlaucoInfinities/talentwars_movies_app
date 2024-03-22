@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -140,8 +142,6 @@ fun PopularMoviesScreen(navController: NavHostController) {
                     }) { index, movie ->
                         PopularMovieCompose(
                             movie,
-                            calculatePercent = viewModel::calculatePercent,
-                            getMovieYear = viewModel::getMovieYear
                         ) {
                             val jsonArgs = Uri.encode(Gson().toJson(movie))
                             navController.navigate(
