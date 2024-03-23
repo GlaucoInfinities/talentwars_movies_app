@@ -4,13 +4,13 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+
 data class RequestPopularMovies(
     val page: Int,
     val results: List<Movies>,
     val totalPages: Int,
     val totalResults: Int
 )
-
 @Entity(tableName = "movies")
 data class Movies(
     @PrimaryKey val id: Int,

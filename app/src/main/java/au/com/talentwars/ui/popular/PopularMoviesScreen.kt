@@ -13,14 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
-import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -51,6 +48,7 @@ import au.com.talentwars.R
 import au.com.talentwars.ui.PopularMoviesUiState
 import au.com.talentwars.ui.components.PopularMovieCompose
 import au.com.talentwars.ui.components.Screen
+import au.com.talentwars.ui.components.TextInterBold
 import com.google.gson.Gson
 
 @Composable
@@ -116,9 +114,7 @@ fun PopularMoviesScreen(navController: NavHostController) {
 
         }
         when (uiState) {
-            PopularMoviesUiState.Initial -> {
-                //Nothing to show
-            }
+            PopularMoviesUiState.Initial -> {}
 
             PopularMoviesUiState.Loading -> {
                 Box(
@@ -141,16 +137,11 @@ fun PopularMoviesScreen(navController: NavHostController) {
                         )
                     }) { index, movie ->
                         PopularMovieCompose(
-                            movie,
+                            movie
                         ) {
-                            /*val jsonArgs = Uri.encode(Gson().toJson(movie))
+                            val jsonArgs = Uri.encode(Gson().toJson(movie))
                             navController.navigate(
-                                route = Screen.DetailScreen.route + "/false/${movie.title}/$jsonArgs"
-                            )*/
-
-                            //val jsonArgs = Uri.encode(Gson().toJson(movie))
-                            navController.navigate(
-                                route = Screen.DetailScreen.route
+                                route = Screen.DetailScreen.route + "/$jsonArgs"
                             )
                         }
                         if (index == list.size - 1 && !viewModel.isLoading) {

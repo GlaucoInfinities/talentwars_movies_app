@@ -11,7 +11,7 @@ import au.com.talentwars.ui.components.Screen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SavedFragment : Fragment() {
+class FavouritesFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -19,7 +19,7 @@ class SavedFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                Navigation(Screen.SavedScreen.route)
+                Navigation(Screen.FavouritesScreen.route)
             }
         }
     }

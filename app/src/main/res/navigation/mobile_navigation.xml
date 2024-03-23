@@ -12,10 +12,10 @@
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="au.com.talentwars.ui.details.DetailsMoviesFragment"
-        android:label="@string/title_sources" />
+        android:label="@string/title_details" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="au.com.talentwars.ui.saved.SavedFragment"
-        android:label="@string/title_saved" />
+        android:name="au.com.talentwars.ui.saved.FavouritesFragment"
+        android:label="@string/title_favourites" />
 </navigation>
