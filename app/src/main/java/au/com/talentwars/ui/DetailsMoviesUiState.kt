@@ -1,7 +1,6 @@
 package au.com.talentwars.ui
 
 import au.com.talentwars.data.model.Details
-import au.com.talentwars.data.model.Movies
 
 sealed interface DetailsMoviesUiState {
     /**
@@ -15,7 +14,7 @@ sealed interface DetailsMoviesUiState {
     data object Loading : DetailsMoviesUiState
 
     /**
-     * Articles has been loaded
+     * Details Movies has been loaded
      */
     data class Success(val movies: Details) : DetailsMoviesUiState
 

@@ -14,7 +14,7 @@ sealed interface PopularMoviesUiState {
     data object Loading : PopularMoviesUiState
 
     /**
-     * Articles has been loaded
+     * Popular Movies has been loaded
      */
     data class Success(val movies: List<Movies>) : PopularMoviesUiState
 

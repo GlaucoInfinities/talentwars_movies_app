@@ -16,16 +16,22 @@ import androidx.compose.ui.unit.dp
 import au.com.talentwars.R
 
 @Composable
-fun RateStar(onClick: () -> Unit) {
+fun RateStar(onClick: () -> Unit,  modifier: Modifier? = Modifier,rated:Boolean) {
     val context = LocalContext.current
+
+    val resourceId = if (rated) {
+        R.drawable.ic_rated_star
+    } else {
+        R.drawable.ic_rate_star
+    }
 
     val bitmap: Bitmap = BitmapFactory.decodeResource(
         context.resources,
-        R.drawable.ic_rate_star
+        resourceId
     )
     IconButton(
         onClick = onClick,
-        modifier = Modifier.padding(start = 160.dp),
+        modifier = modifier ?: Modifier,
     ) {
         val imageBitmap = bitmap.asImageBitmap()
         val icon: Painter = BitmapPainter(imageBitmap)

@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,12 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,6 +38,7 @@ import au.com.talentwars.R
 import au.com.talentwars.data.model.Genres
 import au.com.talentwars.data.model.Movies
 import au.com.talentwars.ui.components.CachedAsyncImage
+import au.com.talentwars.ui.components.ImageCardRoundedTopEnd
 import au.com.talentwars.ui.components.RateStar
 import au.com.talentwars.ui.components.Screen
 import au.com.talentwars.ui.components.SeekBar
@@ -88,17 +84,8 @@ fun DetailsMoviesScreen(
                             .width(140.dp)
                             .height(190.dp)
                             .background(Color.White),
-
                         ) {
-                        CachedAsyncImage(
-                            url = "https://media.themoviedb.org/t/p/w300_and_h450_bestv2" + movie.poster_path,
-                            modifier = Modifier
-                                .width(136.dp)
-                                .height(188.dp)
-                                .padding(start = 5.dp, top = 5.dp)
-                                .clip(RoundedCornerShape(0.dp, 35.dp, 0.dp, 0.dp)),
-                            contentScale = ContentScale.FillBounds,
-                        )
+                        ImageCardRoundedTopEnd(urlImage = movie.poster_path)
                     }
                 }
                 Column(
@@ -138,7 +125,7 @@ fun DetailsMoviesScreen(
                     )
                 }
             }
-            ClickableContainer(navController,movie)
+            ClickableContainer(navController, movie)
             Column {
                 TextInterBold("Overview", modifier = Modifier.padding(top = 33.dp, bottom = 14.dp))
                 TextInterRegular(movie.overview)
@@ -148,7 +135,7 @@ fun DetailsMoviesScreen(
 }
 
 @Composable
-fun ClickableContainer(navController: NavHostController,movie: Movies) {
+fun ClickableContainer(navController: NavHostController, movie: Movies) {
 
     val favouritesViewModel: FavouritesViewModel = hiltViewModel()
 
@@ -286,7 +273,7 @@ fun Header(movie: Movies, navController: NavHostController) {
         Column {
             ButtonBack(navController)
             TextTitle(movieTitle = movie.title)
-            RateStar(onClick = { })
+            RateStar(onClick = { },  modifier = Modifier.padding(start = 160.dp), rated = false)
         }
     }
 }

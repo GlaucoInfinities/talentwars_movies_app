@@ -20,7 +20,6 @@ class FavouritesRepository @Inject constructor(private val favouritesDao: Favour
         insertOrUpdateFavourites(favourites)
     }
 
-
     val allFavouritesFromDataBase: Flow<List<Favourites>> = favouritesDao.getAllFavourites()
 
     suspend fun insertOrUpdateFavourites(favourites: Favourites) {

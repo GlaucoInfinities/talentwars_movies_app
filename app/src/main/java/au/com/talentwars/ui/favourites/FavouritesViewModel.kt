@@ -9,6 +9,8 @@ import au.com.talentwars.data.model.Details
 import au.com.talentwars.data.model.Favourites
 import au.com.talentwars.data.model.Movies
 import au.com.talentwars.ui.DetailsMoviesUiState
+import au.com.talentwars.ui.FavouritesMoviesUiState
+import au.com.talentwars.ui.PopularMoviesUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -22,21 +24,8 @@ import javax.inject.Inject
 class FavouritesViewModel @Inject constructor(
     private val favouritesRepository: FavouritesRepository
 ) : ViewModel() {
+    val favourites: Flow<List<Favourites>> = favouritesRepository.allFavouritesFromDataBase
 
-    init {
-        viewModelScope.launch {
-            val favourites: List<Favourites> = fetchFavourites()
-            Log.d("Tag", favourites.toString())
-        }
-    }
-
-    suspend fun fetchFavourites(): List<Favourites> {
-        val favouritesList: MutableList<Favourites> = mutableListOf()
-        favouritesRepository.allFavouritesFromDataBase.collect { favourites ->
-            favouritesList.addAll(favourites)
-        }
-        return favouritesList
-    }
 
     fun saveFavourites(movie: Movies) {
         viewModelScope.launch {
@@ -44,7 +33,7 @@ class FavouritesViewModel @Inject constructor(
                 Favourites(
                     id = movie.id,
                     countRating = 1,
-                    backdropPath = movie.backdrop_path
+                    backdropPath = movie.poster_path
                 )
             )
         }

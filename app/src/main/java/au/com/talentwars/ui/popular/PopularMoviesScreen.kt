@@ -105,7 +105,6 @@ fun ListMovies(
 ) {
     val viewModel: PopularMoviesViewModel = hiltViewModel()
     val list = (uiState as PopularMoviesUiState.Success).movies
-    val green = colorResource(id = R.color.green_top_bar)
 
     LazyColumn(
         modifier = Modifier.padding(top = 10.dp),
@@ -130,7 +129,7 @@ fun ListMovies(
                     onClick = {
                         viewModel.loadNextPage()
                     },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = green),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.green_top_bar)),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(9.dp)
