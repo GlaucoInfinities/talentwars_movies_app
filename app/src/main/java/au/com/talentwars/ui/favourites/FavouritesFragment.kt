@@ -1,4 +1,4 @@
-package au.com.talentwars.ui.saved
+package au.com.talentwars.ui.favourites
 
 import android.os.Bundle
 import android.view.LayoutInflater

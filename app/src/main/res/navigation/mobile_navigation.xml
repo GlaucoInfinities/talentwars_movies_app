@@ -16,6 +16,6 @@
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="au.com.talentwars.ui.saved.FavouritesFragment"
+        android:name="au.com.talentwars.ui.favourites.FavouritesFragment"
         android:label="@string/title_favourites" />
 </navigation>

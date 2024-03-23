@@ -1,4 +1,4 @@
-package au.com.talentwars.ui.components
+package au.com.talentwars.ui.popular.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,29 +12,22 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import au.com.talentwars.R
 import au.com.talentwars.data.model.Genres
 import au.com.talentwars.data.model.Movies
+import au.com.talentwars.ui.components.CachedAsyncImage
+import au.com.talentwars.ui.components.TextInterBold
+import au.com.talentwars.ui.components.TextInterRegular
 import au.com.talentwars.ui.popular.PopularMoviesViewModel
-import coil.ImageLoader
-import coil.compose.SubcomposeAsyncImage
-import coil.request.ImageRequest
 
 @Composable
 fun PopularMovieCompose(
@@ -43,7 +36,7 @@ fun PopularMovieCompose(
 ) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor =  colorResource(id = R.color.white),
+            containerColor = colorResource(id = R.color.white),
         ),
         modifier = Modifier
             .fillMaxWidth()
@@ -61,72 +54,39 @@ fun PopularMovieCompose(
 }
 
 @Composable
-fun CardDetails(movie:Movies){
+fun CardDetails(movie: Movies) {
     val popularMoviesViewModel: PopularMoviesViewModel = hiltViewModel()
-    val context = LocalContext.current
-    val imageLoader =
-        remember { ImageLoader(context) }
-    val request = ImageRequest.Builder(context)
-        .data("https://media.themoviedb.org/t/p/w300_and_h450_bestv2" + movie.poster_path)
-        .crossfade(true)
-        .build()
-
-    val fontFamilyBold = FontFamily(Font(R.font.inter_bold))
-    val textStyleBold = TextStyle(
-        fontFamily = fontFamilyBold,
-        color = colorResource(id = R.color.black),
-    )
-
-    val fontFamilyRegular = FontFamily(Font(R.font.inter_regular))
-    val textStyleRegular = TextStyle(
-        fontFamily = fontFamilyRegular,
-        fontSize = 12.sp,
-        color = colorResource(id = R.color.black),
-    )
-    val lightGreyColor = colorResource(id = R.color.grey_200)
-
     Row {
-        SubcomposeAsyncImage(
-            model = request,
-            contentDescription = movie.title,
+        CachedAsyncImage(
+            url = "https://media.themoviedb.org/t/p/w300_and_h450_bestv2" + movie.poster_path,
             modifier = Modifier
                 .fillMaxHeight()
                 .width(85.dp)
                 .clip(RoundedCornerShape(8.dp)),
-            contentScale = ContentScale.FillBounds,
-            imageLoader = imageLoader
+            contentScale = ContentScale.FillBounds
         )
         Column(
             modifier = Modifier.padding(27.dp, 31.dp, 0.dp, 0.dp)
         )
         {
-            Text(
-                text = movie.title ?: "",
-                style = textStyleBold,
-                fontSize = 16.sp,
-                maxLines = 1,
-                color = Color.Black
-            )
-            Text(
+            TextInterBold(text = movie.title, maxLines = 1)
+            TextInterRegular(
                 modifier = Modifier.padding(0.dp, 5.dp),
-                text = popularMoviesViewModel.getMovieYear(movie.release_date) ?: "",
-                style = textStyleRegular,
-                color = lightGreyColor,
+                text = popularMoviesViewModel.getMovieYear(movie.release_date),
+                color = colorResource(id = R.color.grey_200),
+                fontSize = 12.sp,
             )
             Row {
-                Text(
-                    modifier = Modifier.padding(end = 7.dp),
+                TextInterBold(
                     text = "${popularMoviesViewModel.calculatePercent(movie.vote_average)}%",
-                    style = textStyleBold,
+                    modifier = Modifier.padding(end = 7.dp),
                     fontSize = 12.sp,
                 )
-                Text(
+                TextInterRegular(
                     text = "user score",
-                    style = textStyleRegular,
                     fontSize = 12.sp,
                 )
             }
-
             HorizontalGenres(popularMoviesViewModel.getMovieGenres(movie.genre_ids))
         }
     }
@@ -134,21 +94,18 @@ fun CardDetails(movie:Movies){
 
 @Composable
 fun HorizontalGenres(items: List<Genres>) {
-    val fontFamily = FontFamily(Font(R.font.inter_regular))
-    val textStyle = TextStyle(
-        fontFamily = fontFamily,
-        fontSize = 12.sp,
-        color = colorResource(id = R.color.grey_200),
-    )
     Row(
-        modifier = Modifier.fillMaxHeight().fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth(),
         verticalAlignment = Alignment.Bottom
     ) {
         items.take(2).forEach { text ->
-            Text(
+            TextInterRegular(
                 text = text.name,
-                style = textStyle,
+                fontSize = 12.sp,
                 maxLines = 1,
+                color = colorResource(id = R.color.grey_200),
                 modifier = Modifier
                     .padding(end = 12.dp)
                     .background(

@@ -8,12 +8,19 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import au.com.talentwars.R
 
-
 @Composable
-fun TextInterRegular(text: String, colorResource: Int? = null, color: Color? = null, modifier: Modifier? = Modifier) {
+fun TextInterRegular(
+    text: String,
+    colorResource: Int? = null,
+    color: Color? = null,
+    modifier: Modifier? = Modifier,
+    maxLines:Int = Int.MAX_VALUE,
+    fontSize: TextUnit = 16.sp
+) {
     val fontFamily = FontFamily(Font(R.font.inter_regular))
 
     val resolvedColor = when {
@@ -24,13 +31,14 @@ fun TextInterRegular(text: String, colorResource: Int? = null, color: Color? = n
 
     val textStyle = TextStyle(
         fontFamily = fontFamily,
-        fontSize = 16.sp,
+        fontSize = fontSize,
         color = resolvedColor
     )
 
     Text(
         text = text,
         style = textStyle,
-        modifier = modifier ?: Modifier
+        modifier = modifier ?: Modifier,
+        maxLines = maxLines
     )
 }

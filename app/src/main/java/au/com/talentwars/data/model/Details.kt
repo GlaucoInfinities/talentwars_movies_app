@@ -9,5 +9,4 @@ data class Details(
     @PrimaryKey val id: Int,
     @ColumnInfo(name = "adult") val adult: Boolean,
     @ColumnInfo(name = "backdrop_path") val backdrop_path: String,
-
 )

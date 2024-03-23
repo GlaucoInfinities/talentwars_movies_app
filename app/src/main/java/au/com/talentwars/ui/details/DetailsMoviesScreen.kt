@@ -1,8 +1,5 @@
 package au.com.talentwars.ui.details
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,9 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -49,14 +42,15 @@ import androidx.navigation.NavHostController
 import au.com.talentwars.R
 import au.com.talentwars.data.model.Genres
 import au.com.talentwars.data.model.Movies
+import au.com.talentwars.ui.components.CachedAsyncImage
+import au.com.talentwars.ui.components.RateStar
 import au.com.talentwars.ui.components.Screen
 import au.com.talentwars.ui.components.SeekBar
 import au.com.talentwars.ui.components.TextInterBold
 import au.com.talentwars.ui.components.TextInterRegular
+import au.com.talentwars.ui.components.TextJomhuriaRegular
+import au.com.talentwars.ui.favourites.FavouritesViewModel
 import au.com.talentwars.ui.popular.PopularMoviesViewModel
-import coil.ImageLoader
-import coil.compose.SubcomposeAsyncImage
-import coil.request.ImageRequest
 
 @Composable
 fun DetailsMoviesScreen(
@@ -65,26 +59,7 @@ fun DetailsMoviesScreen(
 ) {
     val viewModel: DetailsMoviesViewModel = hiltViewModel()
     viewModel.setMovie(movie)
-    val context = LocalContext.current
 
-    val imageLoader =
-        remember { ImageLoader(context) }
-    val request = ImageRequest.Builder(context)
-        .data("https://media.themoviedb.org/t/p/w300_and_h450_bestv2" + movie.poster_path)
-        .crossfade(true)
-        .build()
-    val fontFamilyBold = FontFamily(Font(R.font.inter_bold))
-    val textStyleBold = TextStyle(
-        fontFamily = fontFamilyBold,
-        color = colorResource(id = R.color.black),
-    )
-    val fontFamilyRegular = FontFamily(Font(R.font.inter_regular))
-    val textStyleRegular = TextStyle(
-        fontFamily = fontFamilyRegular,
-        fontSize = 12.sp,
-        color = colorResource(id = R.color.black),
-    )
-    val lightGreyColor = colorResource(id = R.color.grey_200)
     val popularMoviesViewModel: PopularMoviesViewModel = hiltViewModel()
 
     Column(
@@ -93,7 +68,7 @@ fun DetailsMoviesScreen(
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Header(context, movie = movie, navController)
+        Header(movie = movie, navController)
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -103,12 +78,10 @@ fun DetailsMoviesScreen(
         ) {
             Row(
             ) {
-
                 Column(
                     modifier = Modifier
                         .width(140.dp),
                 ) {
-
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(topEnd = 35.dp))
@@ -117,53 +90,44 @@ fun DetailsMoviesScreen(
                             .background(Color.White),
 
                         ) {
-
-                        SubcomposeAsyncImage(
-                            model = request,
-                            contentDescription = movie.title,
+                        CachedAsyncImage(
+                            url = "https://media.themoviedb.org/t/p/w300_and_h450_bestv2" + movie.poster_path,
                             modifier = Modifier
                                 .width(136.dp)
                                 .height(188.dp)
                                 .padding(start = 5.dp, top = 5.dp)
                                 .clip(RoundedCornerShape(0.dp, 35.dp, 0.dp, 0.dp)),
                             contentScale = ContentScale.FillBounds,
-                            imageLoader = imageLoader,
                         )
                     }
                 }
-
                 Column(
                     modifier = Modifier
                         .padding(20.dp, 70.dp, 0.dp, 0.dp)
                         .align(alignment = Alignment.Bottom)
                 )
                 {
-                    Text(
+                    TextInterBold(
                         modifier = Modifier.padding(top = 6.dp),
                         text = movie.title,
-                        style = textStyleBold,
-                        fontSize = 16.sp,
                         maxLines = 1,
-                        color = Color.Black
                     )
-                    Text(
+                    TextInterRegular(
                         modifier = Modifier.padding(top = 8.dp),
                         text = popularMoviesViewModel.getMovieYear(movie.release_date) ?: "",
-                        style = textStyleRegular,
-                        color = lightGreyColor,
+                        fontSize = 12.sp,
+                        color = colorResource(id = R.color.grey_200),
                     )
                     HorizontalDetailsGenres(popularMoviesViewModel.getMovieGenres(movie.genre_ids))
                     Spacer(modifier = Modifier.height(15.dp))
                     Row {
-                        Text(
+                        TextInterBold(
                             modifier = Modifier.padding(end = 7.dp),
                             text = "${popularMoviesViewModel.calculatePercent(movie.vote_average)}%",
-                            style = textStyleBold,
                             fontSize = 20.sp,
                         )
-                        Text(
+                        TextInterRegular(
                             text = "user score",
-                            style = textStyleRegular,
                             fontSize = 12.sp,
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
@@ -174,7 +138,7 @@ fun DetailsMoviesScreen(
                     )
                 }
             }
-            ClickableContainer(navController)
+            ClickableContainer(navController,movie)
             Column {
                 TextInterBold("Overview", modifier = Modifier.padding(top = 33.dp, bottom = 14.dp))
                 TextInterRegular(movie.overview)
@@ -184,9 +148,11 @@ fun DetailsMoviesScreen(
 }
 
 @Composable
-fun ClickableContainer(navController: NavHostController) {
+fun ClickableContainer(navController: NavHostController,movie: Movies) {
 
-    var topButtonColor by remember {mutableStateOf(R.color.background_top_rate)}
+    val favouritesViewModel: FavouritesViewModel = hiltViewModel()
+
+    var topButtonColor by remember { mutableStateOf(R.color.background_top_rate) }
     val initialTopButtonColor = R.color.background_top_rate
     val toggledTopButtonColorResource = R.color.background_top_rate_pressed
     var buttonTopText by remember { mutableStateOf("Rate it myself >") }
@@ -198,15 +164,19 @@ fun ClickableContainer(navController: NavHostController) {
             .padding(top = 27.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         Column(
             modifier = Modifier
                 .weight(1f)
                 .clickable {
                     topButtonColor =
                         if (topButtonColor == initialTopButtonColor) toggledTopButtonColorResource else initialTopButtonColor
-                    buttonTopText = if (buttonTopText == "Rate it myself >") "You’ve rated this 0" else "Rate it myself >"
-                    buttonBottomText = if (buttonBottomText == "add personal rating") "click to reset" else "add personal rating"
+                    buttonTopText =
+                        if (buttonTopText == "Rate it myself >") "You’ve rated this 0" else "Rate it myself >"
+                    buttonBottomText =
+                        if (buttonBottomText == "add personal rating") "click to reset" else "add personal rating"
+
+                    favouritesViewModel.saveFavourites(movie)
+
                 }
         ) {
             Column {
@@ -214,14 +184,14 @@ fun ClickableContainer(navController: NavHostController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
-                        .background(color = colorResource(id = topButtonColor) )
+                        .background(color = colorResource(id = topButtonColor))
                 ) {
-                    Text(
+                    TextInterRegular(
                         modifier = Modifier
                             .padding(6.dp)
                             .align(Alignment.Center),
                         text = buttonTopText,
-                        color =  Color.White
+                        color = Color.White
                     )
                 }
                 Box(
@@ -236,11 +206,12 @@ fun ClickableContainer(navController: NavHostController) {
                         .background(color = Color.Black)
 
                 ) {
-                    Text(
+                    TextInterRegular(
                         modifier = Modifier
                             .padding(6.dp)
                             .align(Alignment.Center),
                         text = buttonBottomText,
+                        fontSize = 12.sp,
                         color = colorResource(id = R.color.text_bottom_rate)
                     )
                 }
@@ -265,7 +236,7 @@ fun ClickableContainer(navController: NavHostController) {
                 elevation = ButtonDefaults.elevation(defaultElevation = 8.dp)
 
             ) {
-                Text(
+                TextInterRegular(
                     modifier = Modifier.padding(vertical = 10.dp),
                     text = "View Favs",
                     color = colorResource(id = R.color.goldenrod_400)
@@ -274,23 +245,19 @@ fun ClickableContainer(navController: NavHostController) {
         }
     }
 }
+
 @Composable
 fun HorizontalDetailsGenres(items: List<Genres>) {
-    val fontFamily = FontFamily(Font(R.font.inter_regular))
-    val textStyle = TextStyle(
-        fontFamily = fontFamily,
-        fontSize = 12.sp,
-        color = colorResource(id = R.color.grey_200),
-    )
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Bottom
     ) {
         items.take(2).forEach { text ->
-            Text(
+            TextInterRegular(
                 text = text.name,
-                style = textStyle,
                 maxLines = 1,
+                fontSize = 12.sp,
+                color = colorResource(id = R.color.grey_200),
                 modifier = Modifier
                     .padding(end = 12.dp)
                     .padding(horizontal = 0.dp, vertical = 3.dp)
@@ -300,27 +267,15 @@ fun HorizontalDetailsGenres(items: List<Genres>) {
 }
 
 @Composable
-fun Header(context: Context, movie: Movies, navController: NavHostController) {
-    val imageLoader =
-        remember { ImageLoader(context) }
-    val request = ImageRequest.Builder(context)
-        .data("https://media.themoviedb.org/t/p/w1920_and_h800_multi_faces" + movie.backdrop_path)
-        .crossfade(true)
-        .build()
-    val bitmap: Bitmap = BitmapFactory.decodeResource(
-        context.resources,
-        R.drawable.ic_rate_star
-    )
+fun Header(movie: Movies, navController: NavHostController) {
     Box(
     ) {
-        SubcomposeAsyncImage(
-            model = request,
-            contentDescription = movie.title,
+        CachedAsyncImage(
+            url = "https://media.themoviedb.org/t/p/w1920_and_h800_multi_faces" + movie.backdrop_path,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(280.dp),
-            contentScale = ContentScale.FillHeight,
-            imageLoader = imageLoader,
+            contentScale = ContentScale.FillHeight
         )
         Box(
             modifier = Modifier
@@ -328,57 +283,29 @@ fun Header(context: Context, movie: Movies, navController: NavHostController) {
                 .height(280.dp)
                 .background(Color.Black.copy(alpha = 0.8f))
         )
-
         Column {
             ButtonBack(navController)
             TextTitle(movieTitle = movie.title)
-            RateStar(onClick = { /* Your click action */ }, bitmap)
+            RateStar(onClick = { })
         }
     }
 }
 
 @Composable
-fun RateStar(onClick: () -> Unit, bitmap: Bitmap) {
-    IconButton(
-        onClick = onClick,
-        modifier = Modifier.padding(start = 160.dp),
-    ) {
-        val imageBitmap = bitmap.asImageBitmap()
-        val icon: Painter = BitmapPainter(imageBitmap)
-        Icon(
-            painter = icon,
-            contentDescription = null,
-            tint = Color.Unspecified
-        )
-    }
-}
-
-@Composable
 fun TextTitle(movieTitle: String) {
-    val fontFamily = FontFamily(Font(R.font.jomhuria_regular))
-    val textStyle = TextStyle(
-        fontFamily = fontFamily,
-        fontSize = 96.sp,
-        color = colorResource(id = R.color.white),
-    )
-    Text(
+    TextJomhuriaRegular(
         modifier = Modifier
             .padding(horizontal = 32.dp)
             .padding(top = 20.dp),
         maxLines = 1,
         text = movieTitle,
-        style = textStyle
+        fontSize = 96.sp,
+        color = colorResource(id = R.color.white)
     )
 }
 
 @Composable
 fun ButtonBack(backStack: NavHostController) {
-    val fontFamily = FontFamily(Font(R.font.inter_regular))
-    val textStyle = TextStyle(
-        fontFamily = fontFamily,
-        fontSize = 10.sp,
-        color = colorResource(id = R.color.white),
-    )
     Row(modifier = Modifier.padding(top = 34.dp, start = 32.dp)) {
         Button(
             onClick = { backStack.popBackStack() },
@@ -393,10 +320,11 @@ fun ButtonBack(backStack: NavHostController) {
                 tint = Color.White,
                 modifier = Modifier.size(10.dp),
             )
-            Text(
+            TextInterRegular(
                 modifier = Modifier.padding(start = 10.dp, end = 5.dp),
                 text = "Back to Search",
-                style = textStyle
+                fontSize = 10.sp,
+                color = colorResource(id = R.color.white)
             )
         }
     }

@@ -9,7 +9,7 @@ import androidx.navigation.navArgument
 import au.com.talentwars.data.model.Movies
 import au.com.talentwars.ui.details.DetailsMoviesScreen
 import au.com.talentwars.ui.popular.PopularMoviesScreen
-import au.com.talentwars.ui.saved.FavouritesScreen
+import au.com.talentwars.ui.favourites.FavouritesScreen
 import com.google.gson.Gson
 
 @Composable
