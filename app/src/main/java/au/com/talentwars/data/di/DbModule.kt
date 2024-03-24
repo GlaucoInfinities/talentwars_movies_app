@@ -2,7 +2,6 @@ package au.com.talentwars.data.di
 
 import android.content.Context
 import au.com.talentwars.data.database.AppDatabase
-import au.com.talentwars.data.database.FavouritesDao
 import au.com.talentwars.data.database.GenresDao
 
 import dagger.Module
@@ -20,12 +19,6 @@ object DbModule {
     @Provides
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
         return AppDatabase.getDatabase(context)
-    }
-
-    @Singleton
-    @Provides
-    fun provideFavouritesDao(db: AppDatabase): FavouritesDao {
-        return db.favouritesDao()
     }
 
     @Singleton

@@ -20,6 +20,6 @@ fun SeekBar(
         color = colorResource(id = R.color.background_track_color_slider),
         backgroundColor = colorResource(id = R.color.background_slider),
         modifier = Modifier
-            .width(120.dp)
+            .width(135.dp)
     )
 }

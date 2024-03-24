@@ -1,7 +1,6 @@
 package au.com.talentwars.data
 
-import au.com.talentwars.data.model.Details
-import au.com.talentwars.data.model.Movies
+import au.com.talentwars.data.model.DetailsMovie
 import au.com.talentwars.data.network.ApiNetwork
 import au.com.talentwars.data.network.ApiService
 import javax.inject.Inject
@@ -13,7 +12,7 @@ class DetailsRepository @Inject constructor() {
 
     suspend fun loadMovieDetailsFromServer(
         movieID: Int,
-        onSuccess: (Details) -> Unit, onError: (String) -> Unit
+        onSuccess: (DetailsMovie) -> Unit, onError: (String) -> Unit
     ) {
         try {
             val request = service.requestMovieDetailsFromSourceResponse(movieID)
@@ -30,5 +29,4 @@ class DetailsRepository @Inject constructor() {
             onError(e.message ?: "Error")
         }
     }
-
 }

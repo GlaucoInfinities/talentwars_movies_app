@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "details")
-data class Details(
+@Entity(tableName = "details_movie")
+data class DetailsMovie(
     @PrimaryKey val id: Int,
     @ColumnInfo(name = "adult") val adult: Boolean,
     @ColumnInfo(name = "backdrop_path") val backdrop_path: String,

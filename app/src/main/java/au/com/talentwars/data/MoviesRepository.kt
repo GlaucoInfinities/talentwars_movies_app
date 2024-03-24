@@ -30,4 +30,24 @@ class MoviesRepository @Inject constructor() {
         }
     }
 
+    suspend fun loadSearchFromServer(
+        query: String,
+        onSuccess: (List<Movies>) -> Unit, onError: (String) -> Unit
+    ) {
+        try {
+            val request = service.requestSearchMoviesFromSourceResponse(query = query)
+
+            if (request.isSuccessful) {
+                val complete = request.body()
+                complete?.let { onSuccess(it.results) }
+            } else {
+                onError("Could not load ${request.errorBody()?.string()}")
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            onError(e.message ?: "Error")
+        }
+    }
+
 }

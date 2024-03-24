@@ -1,6 +1,6 @@
 package au.com.talentwars.ui
 
-import au.com.talentwars.data.model.Details
+import au.com.talentwars.data.model.DetailsMovie
 
 sealed interface DetailsMoviesUiState {
     /**
@@ -16,7 +16,7 @@ sealed interface DetailsMoviesUiState {
     /**
      * Details Movies has been loaded
      */
-    data class Success(val movies: Details) : DetailsMoviesUiState
+    data class Success(val movies: DetailsMovie) : DetailsMoviesUiState
 
     /**
      * There was an error

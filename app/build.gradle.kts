@@ -61,6 +61,8 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.0.0")
+
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation("androidx.test.ext:junit-ktx:1.1.5")
@@ -121,4 +123,7 @@ dependencies {
 
     implementation("androidx.compose.foundation:foundation:1.6.2")
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.34.0")
+
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+
 }

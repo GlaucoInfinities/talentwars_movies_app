@@ -42,3 +42,4 @@ fun TextJomhuriaRegular(
         maxLines = maxLines
     )
 }
+

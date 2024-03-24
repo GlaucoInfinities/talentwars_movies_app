@@ -4,9 +4,9 @@ import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -14,10 +14,9 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -42,16 +41,12 @@ import com.google.gson.Gson
 @Composable
 fun PopularMoviesScreen(navController: NavHostController) {
     val viewModel: PopularMoviesViewModel = hiltViewModel()
-    val uiState by viewModel.uiState.collectAsState(initial = PopularMoviesUiState.Initial)
-    var searchText by remember { mutableStateOf(TextFieldValue("")) }
-    val titleText by remember {
-        derivedStateOf {
-            if (searchText.text.isEmpty()) {
-                "Popular Right Now"
-            } else {
-                "Your Results"
-            }
-        }
+
+    var searchText by remember { viewModel.searchText }
+    val titleText by remember { viewModel.titleText }
+
+    LaunchedEffect(searchText.text) {
+        viewModel.updateTitleText()
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -59,6 +54,10 @@ fun PopularMoviesScreen(navController: NavHostController) {
             Modifier
                 .fillMaxWidth()
                 .background(color = colorResource(id = R.color.green_top_bar))
+                .height(215.dp)
+                .padding(top = 57.dp)
+                .padding(horizontal = 31.dp)
+
         ) {
             TextFieldInterBold(searchText = searchText, setSearchText = { searchText = it })
 
@@ -67,37 +66,44 @@ fun PopularMoviesScreen(navController: NavHostController) {
                 color = colorResource(id = R.color.green_top_bar_text),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 37.dp)
-                    .padding(bottom = 27.dp)
-                    .padding(horizontal = 34.dp)
+                    .padding(top = 36.dp)
             )
         }
-        when (uiState) {
-            PopularMoviesUiState.Initial -> {}
-            PopularMoviesUiState.Loading -> {
-                Box(
-                    contentAlignment = Alignment.Center, modifier = Modifier.padding(all = 8.dp)
-                ) {
-                    CenteredCircularProgressIndicator()
-                }
-            }
+        InitLoadingPage(viewModel,searchText,navController)
+    }
+}
+@Composable
+fun InitLoadingPage(
+    viewModel: PopularMoviesViewModel,
+    searchText: TextFieldValue,
+    navController: NavHostController
+) {
+    val uiState by viewModel.uiState.collectAsState(initial = PopularMoviesUiState.Initial)
 
-            is PopularMoviesUiState.Success -> {
-                ListMovies(uiState, searchText = searchText, navController)
+    when (uiState) {
+        PopularMoviesUiState.Initial -> {}
+        PopularMoviesUiState.Loading -> {
+            Box(
+                contentAlignment = Alignment.Center, modifier = Modifier.padding(all = 8.dp)
+            ) {
+                CenteredCircularProgressIndicator()
             }
+        }
 
-            is PopularMoviesUiState.Error -> {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(all = 8.dp)) {
-                    Text(
-                        (uiState as PopularMoviesUiState.Error).errorMessage,
-                        textAlign = TextAlign.Center
-                    )
-                }
+        is PopularMoviesUiState.Success -> {
+            ListMovies(uiState, searchText = searchText, navController)
+        }
+
+        is PopularMoviesUiState.Error -> {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(all = 8.dp)) {
+                Text(
+                    (uiState as PopularMoviesUiState.Error).errorMessage,
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }
 }
-
 @Composable
 fun ListMovies(
     uiState: PopularMoviesUiState,
@@ -107,9 +113,8 @@ fun ListMovies(
     val list = (uiState as PopularMoviesUiState.Success).movies
 
     LazyColumn(
-        modifier = Modifier.padding(top = 10.dp),
-        contentPadding = PaddingValues(bottom = 5.dp)
-    ) {
+        modifier = Modifier.padding(top = 10.dp, bottom = 5.dp),
+        ) {
         itemsIndexed(list.filter {
             it.title.contains(
                 searchText.text,

@@ -1,12 +1,15 @@
 package au.com.talentwars.ui.favourites
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,19 +20,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,13 +38,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import au.com.talentwars.R
 import au.com.talentwars.ui.FavouritesMoviesUiState
-import au.com.talentwars.ui.PopularMoviesUiState
 import au.com.talentwars.ui.components.CenteredCircularProgressIndicator
 import au.com.talentwars.ui.components.ImageCardRoundedTopEnd
 import au.com.talentwars.ui.components.RateStar
 import au.com.talentwars.ui.components.TextInterRegular
 import au.com.talentwars.ui.components.TextJomhuriaRegular
-import au.com.talentwars.ui.popular.ListMovies
 
 @Composable
 fun FavouritesScreen(navController: NavHostController) {
@@ -58,23 +57,79 @@ fun FavouritesScreen(navController: NavHostController) {
             ButtonBack(navController)
         }
 
-        TextJomhuriaRegular(
-            text = "My favourites", fontSize = 96.sp,
-            color = colorResource(id = R.color.green_top_bar_text),
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 37.dp)
-                .padding(bottom = 27.dp)
-                .padding(horizontal = 34.dp)
-        )
-        ListFavourites()
+                .fillMaxHeight()
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                TextJomhuriaRegular(
+                    text = "My favourites", fontSize = 96.sp,
+                    color = colorResource(id = R.color.green_top_bar_text),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 37.dp)
+                        .padding(horizontal = 35.dp)
+                )
+                InitLoadingPage()
+
+            }
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .fillMaxHeight()
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(Color.White, Color.Transparent),
+                            startX = Float.POSITIVE_INFINITY,
+                            endX = 0f
+                        )
+                    )
+                    .size(45.dp)
+            )
+            SearchForMore(navController)
+        }
     }
 
+}
+
+@Composable
+fun InitLoadingPage() {
+    val viewModel: FavouritesViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsState(initial = FavouritesMoviesUiState.Initial)
+
+    when (uiState) {
+        FavouritesMoviesUiState.Initial -> {}
+        FavouritesMoviesUiState.Loading -> {
+            Box(
+                contentAlignment = Alignment.Center, modifier = Modifier.padding(all = 8.dp)
+            ) {
+                CenteredCircularProgressIndicator()
+            }
+        }
+
+        is FavouritesMoviesUiState.Success -> {
+            ListFavourites(uiState)
+        }
+
+        is FavouritesMoviesUiState.Error -> {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(all = 8.dp)) {
+                Text(
+                    (uiState as FavouritesMoviesUiState.Error).errorMessage,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun SearchForMore(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 63.dp)
-            .padding(bottom = 99.dp),
+            .padding(horizontal = 64.dp)
+            .padding(bottom = 87.dp),
         verticalArrangement = Arrangement.Bottom
     ) {
         Button(
@@ -98,34 +153,42 @@ fun FavouritesScreen(navController: NavHostController) {
 }
 
 @Composable
-fun ListFavourites() {
-    val viewModel: FavouritesViewModel = hiltViewModel()
-    val favourites by remember { viewModel.favourites }.collectAsState(initial = emptyList())
+fun ListFavourites(uiState: FavouritesMoviesUiState) {
+    val list = (uiState as FavouritesMoviesUiState.Success).favourites
 
-//33do
-    LazyRow {
-        items(favourites) { item ->
+    LazyRow(
+        modifier = Modifier.padding(start = 20.dp),
+        horizontalArrangement = Arrangement.spacedBy(30.dp),
+    ) {
+        items(list) { item ->
             Column(
                 Modifier
-                    .fillMaxSize()
-                    .background(Color.White),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .background(Color.White)
+                    .offset(x = (0).dp, y = (-9).dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-
-                ImageCardRoundedTopEnd(item.backdropPath)
+                ImageCardRoundedTopEnd(
+                    item.poster_path,
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(166.dp),
+                )
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .offset(x = (0).dp, y = (-25).dp)
-                        .padding(),
+                        .offset(x = (0).dp, y = (-30).dp),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     RateStar(
                         onClick = { }, rated = true
                     )
-                    TextInterRegular(text = "My Rating")
-                    TextInterRegular(text = item.countRating.toString(), fontSize = 20.sp)
+                    TextInterRegular(text = "My Rating", modifier = Modifier.padding(top = 5.dp))
+                    TextInterRegular(
+                        text = item.rating.toString(),
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(top = 10.dp)
+                    )
                 }
 
 
@@ -136,30 +199,35 @@ fun ListFavourites() {
 
 @Composable
 fun ButtonBack(backStack: NavHostController) {
-    val fontFamily = FontFamily(Font(R.font.inter_regular))
-    val textStyle = TextStyle(
-        fontFamily = fontFamily,
-        fontSize = 10.sp,
-        color = colorResource(id = R.color.white),
-    )
-    Row(modifier = Modifier.padding(top = 34.dp, start = 32.dp)) {
-        Button(
+    Row(
+        modifier =
+        Modifier.padding(top = 30.dp, start = 34.dp)
+    ) {
+        OutlinedButton(
             onClick = { backStack.popBackStack() },
+            border = BorderStroke(0.dp, Color.Transparent),
             colors = ButtonDefaults.textButtonColors(
                 backgroundColor = Color.White.copy(alpha = 0.3f),
+                contentColor = Color.Transparent
             ),
-            shape = RoundedCornerShape(60.dp)
+            shape = RoundedCornerShape(60.dp),
+            modifier = Modifier.height(28.dp)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow_back_24),
                 contentDescription = "Back",
-                tint = Color.White,
-                modifier = Modifier.size(10.dp),
+                tint = colorResource(id = R.color.background_arrow_back),
+                modifier = Modifier
+                    .size(18.dp)
+                    .padding(start = 5.dp),
             )
-            Text(
-                modifier = Modifier.padding(start = 10.dp, end = 5.dp),
+            TextInterRegular(
                 text = "Back",
-                style = textStyle
+                fontSize = 10.sp,
+                modifier = Modifier
+                    .padding(start = 3.dp, end = 10.dp)
+                    .background(Color.Transparent)
+                // .padding(vertical = 7.dp),
             )
         }
     }

@@ -1,15 +1,14 @@
 package au.com.talentwars.ui.components
 
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -60,7 +59,6 @@ fun TextFieldInterBold(
     setSearchText: (TextFieldValue) -> Unit,
     colorResource: Int? = null,
     color: Color? = null,
-    modifier: Modifier? = Modifier
 ) {
     val fontFamily = FontFamily(Font(R.font.inter_bold))
 
@@ -75,7 +73,7 @@ fun TextFieldInterBold(
         fontSize = 16.sp,
         color = resolvedColor
     )
-    TextField(
+    OutlinedTextField(
         value = searchText,
         onValueChange = { setSearchText(it) },
         colors = TextFieldDefaults.textFieldColors(
@@ -86,7 +84,7 @@ fun TextFieldInterBold(
         textStyle = textStyle,
         placeholder = {
             TextInterBold(
-                "Search"
+                "Search", modifier  = Modifier.fillMaxHeight().padding(start = 12.dp)
             )
         },
         trailingIcon = {
@@ -94,12 +92,11 @@ fun TextFieldInterBold(
                 ClearIcon(onClearClicked = { setSearchText(TextFieldValue("")) })
             }
         },
+        maxLines = 1,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 57.dp)
-            .padding(horizontal = 37.dp)
-            .clip(shape = RoundedCornerShape(37.dp))
-            .height(50.dp)
-            .wrapContentHeight(align = Alignment.CenterVertically),
+            .height(48.dp)
+            .padding(horizontal = 6.dp)
+            .clip(shape = RoundedCornerShape(80.dp)),
     )
 }

@@ -11,14 +11,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ImageCardRoundedTopEnd(urlImage: String) {
+fun ImageCardRoundedTopEnd(urlImage: String, modifier: Modifier? = Modifier) {
     CachedAsyncImage(
         url = "https://media.themoviedb.org/t/p/w300_and_h450_bestv2$urlImage",
         modifier = Modifier
-            .width(136.dp)
-            .height(188.dp)
-            .padding(start = 5.dp, top = 5.dp)
-            .clip(RoundedCornerShape(0.dp, 35.dp, 0.dp, 0.dp)),
+            .clip(RoundedCornerShape(0.dp, 40.dp, 0.dp, 0.dp))
+            .then(modifier ?: Modifier),
         contentScale = ContentScale.FillBounds,
     )
 }

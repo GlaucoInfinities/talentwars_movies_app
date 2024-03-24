@@ -38,7 +38,7 @@ fun RateStar(onClick: () -> Unit,  modifier: Modifier? = Modifier,rated:Boolean)
         Icon(
             painter = icon,
             contentDescription = null,
-            tint = Color.Unspecified
+            tint = Color.Unspecified,
         )
     }
 }

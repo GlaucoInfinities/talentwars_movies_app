@@ -35,12 +35,13 @@ fun PopularMovieCompose(
     onClick: () -> Unit
 ) {
     Card(
+        shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(
             containerColor = colorResource(id = R.color.white),
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 34.dp)
             .padding(bottom = 20.dp)
             .height(131.dp)
     ) {
@@ -60,8 +61,8 @@ fun CardDetails(movie: Movies) {
         CachedAsyncImage(
             url = "https://media.themoviedb.org/t/p/w300_and_h450_bestv2" + movie.poster_path,
             modifier = Modifier
-                .fillMaxHeight()
                 .width(85.dp)
+                .height(131.dp)
                 .clip(RoundedCornerShape(8.dp)),
             contentScale = ContentScale.FillBounds
         )

@@ -12,11 +12,13 @@ fun createHttpClient(logging: Boolean = false): OkHttpClient {
         httpClient.addInterceptor(loggingInterceptor)
     }
 
-    // Add headers here
     httpClient.addInterceptor { chain ->
         val request = chain.request().newBuilder()
-            .addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4OGMxZTZjNjYzOGRkMzI5OTAyMGQwZDBmMDRmMGEzMCIsInN1YiI6IjY1ZmIyZTViNTQ1MDhkMDE3Y2Y4ZTM5MiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.gH3QwNvGKwWPQIUrVHNl2d0y8oGIwkgNOSx6-wYE2MI") // Example header
-            .addHeader("accept", "application/json") // Example header
+            .addHeader(
+                "Authorization",
+                "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4OGMxZTZjNjYzOGRkMzI5OTAyMGQwZDBmMDRmMGEzMCIsInN1YiI6IjY1ZmIyZTViNTQ1MDhkMDE3Y2Y4ZTM5MiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.gH3QwNvGKwWPQIUrVHNl2d0y8oGIwkgNOSx6-wYE2MI"
+            )
+            .addHeader("accept", "application/json")
             .build()
         chain.proceed(request)
     }

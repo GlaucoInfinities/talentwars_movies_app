@@ -1,5 +1,8 @@
 package au.com.talentwars.ui.popular
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import au.com.talentwars.data.GenresRepository
@@ -10,11 +13,9 @@ import au.com.talentwars.ui.PopularMoviesUiState
 import au.com.talentwars.util.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,6 +34,18 @@ class PopularMoviesViewModel @Inject constructor(
     private val moviesList = mutableListOf<Movies>()
     private var genresList = mutableListOf<Genres>()
 
+    val searchText: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue(""))
+    val titleText: MutableState<String> = mutableStateOf("Popular Right now")
+
+    fun updateTitleText() {
+        if (searchText.value.text.isEmpty()) {
+            titleText.value =  "Popular Right now"
+            loadPopularMovies(currentPage)
+        } else {
+            titleText.value =  "Your Results"
+            loadSearchMovies()
+        }
+    }
     init {
         _uiState.value = PopularMoviesUiState.Loading
         loadPopularGenres()
@@ -59,6 +72,23 @@ class PopularMoviesViewModel @Inject constructor(
 
             moviesRepository.loadMoviesFromServer(
                 page,
+                onSuccess = { movies ->
+                    moviesList.addAll(movies)
+                    _uiState.value = PopularMoviesUiState.Success(moviesList.toList())
+                    isLoading = false
+                },
+                onError = { error ->
+                    _uiState.value = PopularMoviesUiState.Error(error)
+                    isLoading = false
+                }
+            )
+        }
+    }
+
+    private fun loadSearchMovies() {
+        viewModelScope.launch(Dispatchers.IO) {
+            moviesRepository.loadSearchFromServer(
+                searchText.value.text,
                 onSuccess = { movies ->
                     moviesList.addAll(movies)
                     _uiState.value = PopularMoviesUiState.Success(moviesList.toList())
