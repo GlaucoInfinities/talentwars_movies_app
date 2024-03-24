@@ -72,7 +72,6 @@ fun FavouritesScreen(navController: NavHostController) {
                         .padding(horizontal = 35.dp)
                 )
                 InitLoadingPage()
-
             }
             Box(
                 modifier = Modifier

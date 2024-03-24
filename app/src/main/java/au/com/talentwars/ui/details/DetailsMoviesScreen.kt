@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
@@ -153,7 +155,8 @@ fun DetailsContainer(movie: Movies, popularMoviesViewModel: PopularMoviesViewMod
 @Composable
 fun ClickableContainer(
     navController: NavHostController,
-    movie: Movies) {
+    movie: Movies
+) {
 
     val detailsMoviesViewModel: DetailsMoviesViewModel = hiltViewModel()
     detailsMoviesViewModel.setMovie(movie)
@@ -305,13 +308,17 @@ fun TextTitle(movieTitle: String) {
 
 @Composable
 fun OverviewContainer(movie: Movies) {
-    Column {
+    Column(
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+    ) {
         TextInterBold(
             "Overview",
             modifier = Modifier.padding(top = 33.dp, bottom = 14.dp)
         )
         TextInterRegular(movie.overview)
     }
+
 }
 
 @Composable
@@ -345,7 +352,6 @@ fun ButtonBack(backStack: NavHostController) {
                     color = colorResource(id = R.color.white)
                 )
             }
-
         }
     }
 }

@@ -96,7 +96,8 @@ fun TextFieldInterBold(
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp)
-            .padding(horizontal = 6.dp)
+            .padding(start = 12.dp)
+            .padding(horizontal = 12.dp)
             .clip(shape = RoundedCornerShape(80.dp)),
     )
 }
