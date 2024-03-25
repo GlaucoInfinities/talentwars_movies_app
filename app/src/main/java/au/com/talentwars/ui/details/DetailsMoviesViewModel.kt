@@ -7,7 +7,9 @@ import androidx.lifecycle.viewModelScope
 import au.com.talentwars.R
 import au.com.talentwars.data.DetailsRepository
 import au.com.talentwars.data.FavouritesRepository
+import au.com.talentwars.data.GenresRepository
 import au.com.talentwars.data.model.DetailsMovie
+import au.com.talentwars.data.model.Genres
 import au.com.talentwars.data.model.Movies
 import au.com.talentwars.ui.DetailsMoviesUiState
 import au.com.talentwars.ui.RatedMoviesUiState
@@ -23,8 +25,10 @@ import javax.inject.Inject
 class DetailsMoviesViewModel @Inject constructor(
     private val detailsRepository: DetailsRepository,
     private val favouritesRepository: FavouritesRepository,
+    private val genresRepository: GenresRepository
 
-    ) : ViewModel() {
+
+) : ViewModel() {
 
     private val _uiState: MutableStateFlow<DetailsMoviesUiState> =
         MutableStateFlow(DetailsMoviesUiState.Initial)
@@ -46,6 +50,28 @@ class DetailsMoviesViewModel @Inject constructor(
 
     //TODO("variable temp to avoid call server")
     var rated = false
+
+    private var genresList = mutableListOf<Genres>()
+
+
+    init {
+        loadPopularGenres()
+    }
+
+    private fun loadPopularGenres() {
+        viewModelScope.launch(Dispatchers.IO) {
+            genresRepository.loadGenresFromServer(
+                onSuccess = { genres ->
+                    viewModelScope.launch {
+                        genresList.addAll(genres)
+                    }
+                },
+                onError = { error ->
+                }
+            )
+        }
+    }
+
     fun onButtonClick() {
         viewModelScope.launch {
             if (!rated) {
@@ -58,10 +84,10 @@ class DetailsMoviesViewModel @Inject constructor(
 
     fun setMovie(movie: Movies) {
         this.movie = movie
-        loadData()
+        loadDataDetailsMovies()
     }
 
-    private fun loadData() {
+    private fun loadDataDetailsMovies() {
         _uiState.value = DetailsMoviesUiState.Loading
         viewModelScope.launch(Dispatchers.IO) {
             detailsRepository.loadMovieDetailsFromServer(
@@ -80,7 +106,7 @@ class DetailsMoviesViewModel @Inject constructor(
     private fun rateMovie() {
         _uiStateRatedMovie.value = RatedMoviesUiState.Loading
         viewModelScope.launch(Dispatchers.IO) {
-            favouritesRepository.rateMovieFromServer(
+           /* favouritesRepository.rateMovieFromServer(
                 movie.id,
                 onSuccess = { ratedMovie ->
                     rated=true
@@ -90,7 +116,7 @@ class DetailsMoviesViewModel @Inject constructor(
                 onError = { error ->
                     _uiStateRatedMovie.value = RatedMoviesUiState.Error(error)
                 }
-            )
+            )*/
         }
     }
 

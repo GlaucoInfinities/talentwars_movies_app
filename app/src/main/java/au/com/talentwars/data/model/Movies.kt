@@ -1,9 +1,5 @@
 package au.com.talentwars.data.model
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
 
 data class RequestPopularMovies(
     val page: Int,
@@ -11,20 +7,38 @@ data class RequestPopularMovies(
     val totalPages: Int,
     val totalResults: Int
 )
-@Entity(tableName = "movies")
+
 data class Movies(
-    @PrimaryKey val id: Int,
-    @ColumnInfo(name = "adult") val adult: Boolean,
-    @ColumnInfo(name = "backdrop_path") val backdrop_path: String,
-    @ColumnInfo(name = "genre_ids") val genre_ids: List<Int>,
-    @ColumnInfo(name = "original_language") val original_language: String,
-    @ColumnInfo(name = "original_title") val original_title: String,
-    @ColumnInfo(name = "overview") val overview: String,
-    @ColumnInfo(name = "popularity") val popularity: Double,
-    @ColumnInfo(name = "poster_path") val poster_path: String,
-    @ColumnInfo(name = "release_date") val release_date: String,
-    @ColumnInfo(name = "title") val title: String,
-    @ColumnInfo(name = "video") val video: Boolean,
-    @ColumnInfo(name = "vote_average") val vote_average: Double,
-    @ColumnInfo(name = "vote_count") val vote_count: Int
+    val id: Int,
+    val adult: Boolean,
+    val backdrop_path: String,
+    val genre_ids: List<Int>,
+    val original_language: String,
+    val original_title: String,
+    val overview: String,
+    val popularity: Double,
+    val poster_path: String,
+    val release_date: String,
+    val title: String,
+    val video: Boolean,
+    val vote_average: Double,
+    val vote_count: Int
 )
+
+fun Movies.toFavourites(): Favourites {
+    return Favourites(
+        id = this.id,
+        adult = this.adult,
+        backdrop_path = this.backdrop_path,
+        original_language = this.original_language,
+        original_title = this.original_title,
+        overview = this.overview,
+        popularity = this.popularity,
+        poster_path = this.poster_path,
+        release_date = this.release_date,
+        title = this.title,
+        video = this.video,
+        vote_average = this.vote_average,
+        vote_count = this.vote_count
+    )
+}

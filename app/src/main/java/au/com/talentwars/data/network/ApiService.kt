@@ -28,10 +28,4 @@ interface ApiService {
     suspend fun requestGenreMoviesFromSourceResponse(
     ): Response<RequestGenresMovies>
 
-
-  /*  @GET("account/{account_id}/rated/movies")
-    suspend fun requestRatedFromSourceResponse(
-        @Path("account_id") accountID: Int
-    ): Response<RequestFavouritesMovies>*/
-
 }

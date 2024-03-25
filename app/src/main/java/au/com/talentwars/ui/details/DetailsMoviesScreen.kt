@@ -37,8 +37,8 @@ import au.com.talentwars.R
 import au.com.talentwars.data.model.Genres
 import au.com.talentwars.data.model.Movies
 import au.com.talentwars.ui.components.CachedAsyncImage
+import au.com.talentwars.ui.components.FavouritesStar
 import au.com.talentwars.ui.components.ImageCardRoundedTopEnd
-import au.com.talentwars.ui.components.RateStar
 import au.com.talentwars.ui.components.Screen
 import au.com.talentwars.ui.components.SeekBar
 import au.com.talentwars.ui.components.TextInterBold
@@ -124,7 +124,7 @@ fun DetailsContainer(movie: Movies, popularMoviesViewModel: PopularMoviesViewMod
                 )
                 TextInterRegular(
                     modifier = Modifier.padding(top = 8.dp),
-                    text = popularMoviesViewModel.getMovieYear(movie.release_date) ?: "",
+                    text = popularMoviesViewModel.getMovieYear(movie.release_date),
                     fontSize = 12.sp,
                     color = colorResource(id = R.color.grey_200),
                 )
@@ -287,7 +287,7 @@ fun Header(movie: Movies, navController: NavHostController) {
                     .offset(x = (-0).dp, y = (-11).dp),
                 verticalArrangement = Arrangement.Top
             ) {
-                RateStar(onClick = { }, modifier = Modifier.padding(start = 152.dp), rated = false)
+                FavouritesStar(onClick = { }, modifier = Modifier.padding(start = 152.dp), movie=movie)
             }
         }
     }

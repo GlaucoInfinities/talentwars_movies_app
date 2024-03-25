@@ -40,7 +40,6 @@ class PopularMoviesViewModel @Inject constructor(
     fun updateTitleText() {
         if (searchText.value.text.isEmpty()) {
             titleText.value =  "Popular Right now"
-            loadPopularMovies(currentPage)
         } else {
             titleText.value =  "Your Results"
             loadSearchMovies()

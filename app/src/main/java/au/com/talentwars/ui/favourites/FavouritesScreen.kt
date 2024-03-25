@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,8 +38,6 @@ import androidx.navigation.NavHostController
 import au.com.talentwars.R
 import au.com.talentwars.ui.FavouritesMoviesUiState
 import au.com.talentwars.ui.components.CenteredCircularProgressIndicator
-import au.com.talentwars.ui.components.ImageCardRoundedTopEnd
-import au.com.talentwars.ui.components.RateStar
 import au.com.talentwars.ui.components.TextInterRegular
 import au.com.talentwars.ui.components.TextJomhuriaRegular
 
@@ -166,12 +163,12 @@ fun ListFavourites(uiState: FavouritesMoviesUiState) {
                     .offset(x = (0).dp, y = (-9).dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                ImageCardRoundedTopEnd(
-                    item.poster_path,
-                    modifier = Modifier
-                        .width(120.dp)
-                        .height(166.dp),
-                )
+//                ImageCardRoundedTopEnd(
+//                    item.poster_path,
+//                    modifier = Modifier
+//                        .width(120.dp)
+//                        .height(166.dp),
+//                )
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -179,18 +176,16 @@ fun ListFavourites(uiState: FavouritesMoviesUiState) {
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    RateStar(
-                        onClick = { }, rated = true
-                    )
+                    //RateStar(
+                      //  onClick = { }, rated = true
+                    //)
                     TextInterRegular(text = "My Rating", modifier = Modifier.padding(top = 5.dp))
-                    TextInterRegular(
-                        text = item.rating.toString(),
-                        fontSize = 20.sp,
-                        modifier = Modifier.padding(top = 10.dp)
-                    )
+//                    TextInterRegular(
+//                        text = item.rating.toString(),
+//                        fontSize = 20.sp,
+//                        modifier = Modifier.padding(top = 10.dp)
+//                    )
                 }
-
-
             }
         }
     }

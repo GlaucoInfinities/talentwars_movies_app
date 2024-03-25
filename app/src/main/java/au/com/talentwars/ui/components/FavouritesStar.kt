@@ -2,35 +2,43 @@ package au.com.talentwars.ui.components
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import au.com.talentwars.R
+import androidx.hilt.navigation.compose.hiltViewModel
+import au.com.talentwars.data.model.Movies
+import au.com.talentwars.ui.favourites.FavouritesViewModel
 
 @Composable
-fun RateStar(onClick: () -> Unit,  modifier: Modifier? = Modifier,rated:Boolean) {
+fun FavouritesStar(
+    onClick: () -> Unit,
+    modifier: Modifier? = Modifier,
+    rated: Boolean? = false,
+    movie: Movies
+) {
+
+    val viewModel: FavouritesViewModel = hiltViewModel()
     val context = LocalContext.current
 
-    val resourceId = if (rated) {
-        R.drawable.ic_rated_star
-    } else {
-        R.drawable.ic_rate_star
+    val resourceId = viewModel.getImageResource()
+    val bitmap: Bitmap = BitmapFactory.decodeResource(context.resources, resourceId)
+
+    //val favouritesState by viewModel.favouritesState.observeAsState()
+    LaunchedEffect(viewModel) {
+        viewModel.checkFavourites(movie)
     }
 
-    val bitmap: Bitmap = BitmapFactory.decodeResource(
-        context.resources,
-        resourceId
-    )
+
+
     IconButton(
-        onClick = onClick,
+        onClick = { viewModel.onRateStarClicked(movie) },
         modifier = modifier ?: Modifier,
     ) {
         val imageBitmap = bitmap.asImageBitmap()

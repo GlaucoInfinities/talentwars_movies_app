@@ -7,10 +7,11 @@ import androidx.room.RoomDatabase
 import au.com.talentwars.data.model.Favourites
 import au.com.talentwars.data.model.Genres
 
-@Database(entities = [Genres::class], version = 1)
+@Database(entities = [Genres::class, Favourites::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun genresDao(): GenresDao
+    abstract fun favouritesDao(): FavouritesDao
 
 
     companion object {

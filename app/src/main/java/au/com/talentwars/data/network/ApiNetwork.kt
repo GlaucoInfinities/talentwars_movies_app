@@ -5,7 +5,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiNetwork {
-
     fun makeRetrofitService(logging: Boolean = false): Retrofit {
         val client = createHttpClient(logging)
         return Retrofit.Builder()

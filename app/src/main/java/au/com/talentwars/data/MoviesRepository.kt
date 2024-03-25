@@ -16,7 +16,6 @@ class MoviesRepository @Inject constructor() {
     ) {
         try {
             val request = service.requestPopularMoviesFromSourceResponse(page = page)
-
             if (request.isSuccessful) {
                 val complete = request.body()
                 complete?.let { onSuccess(it.results) }
