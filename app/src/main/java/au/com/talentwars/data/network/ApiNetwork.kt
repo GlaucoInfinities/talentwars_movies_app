@@ -1,11 +1,11 @@
 package au.com.talentwars.data.network
 
+import au.com.talentwars.Constants.API_V2_URL
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiNetwork {
 
-    private const val API_V2_URL = "https://api.themoviedb.org/3/"
     fun makeRetrofitService(logging: Boolean = false): Retrofit {
         val client = createHttpClient(logging)
         return Retrofit.Builder()

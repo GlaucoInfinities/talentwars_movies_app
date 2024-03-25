@@ -1,7 +1,6 @@
 package au.com.talentwars.data.network
 
 import au.com.talentwars.data.model.DetailsMovie
-import au.com.talentwars.data.model.RequestFavouritesMovies
 import au.com.talentwars.data.model.RequestGenresMovies
 import au.com.talentwars.data.model.RequestPopularMovies
 import retrofit2.Response
@@ -29,9 +28,10 @@ interface ApiService {
     suspend fun requestGenreMoviesFromSourceResponse(
     ): Response<RequestGenresMovies>
 
-    @GET("account/{account_id}/rated/movies")
-    suspend fun requestFavouritesFromSourceResponse(
+
+  /*  @GET("account/{account_id}/rated/movies")
+    suspend fun requestRatedFromSourceResponse(
         @Path("account_id") accountID: Int
-    ): Response<RequestFavouritesMovies>
+    ): Response<RequestFavouritesMovies>*/
 
 }
