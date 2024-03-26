@@ -40,13 +40,17 @@ class RatesRepository @Inject constructor() {
 
     fun rateMovieFromServer(
         movieID: Int,
+        vote:Double,
         onSuccess: (RequestPost) -> Unit, onError: (String) -> Unit
     ) {
         try {
+
+            val formatRate= "%.1f".format(vote ).toDouble()
+
             GlobalScope.launch(Dispatchers.IO) {
                 try {
                     val jsonObj = JSONObject()
-                    jsonObj.put("value", 8.5)
+                    jsonObj.put("value", formatRate)
                     val jsonParser = JsonParser()
                     val gsonObject = jsonParser.parse(jsonObj.toString()) as JsonObject
                     val urlString = "movie/$movieID/rating"
@@ -55,7 +59,6 @@ class RatesRepository @Inject constructor() {
                     if (success) {
                         response?.let { onSuccess(it) }
                     } else {
-                        // Handle error response
                         onError("Request failed")
                     }
                 } catch (e: Exception) {

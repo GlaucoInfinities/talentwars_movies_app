@@ -18,6 +18,10 @@
     <color name="background_track_color_slider">#FF4CAB4A</color>
     <color name="background_top_rate">#FFAB803F</color>
     <color name="background_top_rate_pressed">#FF6FAB3F</color>
+
+    <color name="background_top_rate_rating_now">#FFFFF6E6</color>
+    <color name="background_top_rate_rating_now_text">#FFAA803F</color>
+
     <color name="background_arrow_back">#FF995630</color>
 
     <color name="text_bottom_rate">#FFD7BA8E</color>

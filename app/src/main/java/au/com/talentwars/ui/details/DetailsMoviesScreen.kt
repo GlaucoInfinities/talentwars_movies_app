@@ -1,6 +1,8 @@
 package au.com.talentwars.ui.details
 
 import android.net.Uri
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -18,15 +21,28 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.Slider
+import androidx.compose.material.SliderDefaults
+import androidx.compose.material.Text
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,8 +50,10 @@ import androidx.navigation.NavHostController
 import au.com.talentwars.R
 import au.com.talentwars.data.model.Genres
 import au.com.talentwars.data.model.Movies
+import au.com.talentwars.ui.RatedMoviesUiState
 import au.com.talentwars.ui.components.ButtonBack
 import au.com.talentwars.ui.components.CachedAsyncImage
+import au.com.talentwars.ui.components.CenteredCircularProgressIndicator
 import au.com.talentwars.ui.components.FavouritesStar
 import au.com.talentwars.ui.components.ImageCardRoundedTopEnd
 import au.com.talentwars.ui.components.Screen
@@ -45,6 +63,7 @@ import au.com.talentwars.ui.components.TextInterRegular
 import au.com.talentwars.ui.components.TextJomhuriaRegular
 import au.com.talentwars.ui.popular.PopularMoviesViewModel
 import com.google.gson.Gson
+import kotlin.math.roundToInt
 
 @Composable
 fun DetailsMoviesScreen(
@@ -56,33 +75,152 @@ fun DetailsMoviesScreen(
     val detailsMoviesViewModel: DetailsMoviesViewModel = hiltViewModel()
     detailsMoviesViewModel.setMovie(movie)
 
-    Box(
-        Modifier
-            .background(Color.White),
-    ) {
-        Column {
-            Header(movie = movie, navController)
 
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 32.dp),
-                verticalArrangement = Arrangement.Top
-            ) {
-                DetailsContainer(movie, popularMoviesViewModel)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Box(
+            Modifier
+                .background(Color.White),
+        ) {
+            Column {
+                Header(movie = movie, navController)
 
                 Column(
                     modifier = Modifier
-                        .offset(x = (-0).dp, y = (-28).dp),
+                        .padding(horizontal = 32.dp),
                     verticalArrangement = Arrangement.Top
-                )
-                {
-                    // RateClickable(navController)
-                    ClickableContainer(navController, movie)
-                    OverviewContainer(movie)
+                ) {
+                    DetailsContainer(movie, popularMoviesViewModel)
+
+                    Column(
+                        modifier = Modifier
+                            .offset(x = (-0).dp, y = (-28).dp),
+                        verticalArrangement = Arrangement.Top
+                    )
+                    {
+                        // RateClickable(navController)
+                        ClickableContainer(navController, movie)
+                        OverviewContainer(movie)
+                    }
                 }
+
+            }
+            val modalVisible by detailsMoviesViewModel.modalVisible.collectAsState()
+            if (modalVisible) {
+                BottomSheetContent(
+                    onClose = { detailsMoviesViewModel.hideModal() },
+                    visible = modalVisible,
+                    detailsMoviesViewModel = detailsMoviesViewModel,
+                    navController,
+                    movie
+                )
             }
         }
+    }
+}
 
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun BottomSheetContent(
+    onClose: () -> Unit,
+    visible: Boolean,
+    detailsMoviesViewModel: DetailsMoviesViewModel,
+    navController: NavHostController,
+    movie: Movies
+) {
+
+    val animatableHeight = remember { Animatable(if (visible) 200f else 0f) }
+
+    val uiState by detailsMoviesViewModel.uiStateRatedMovie.collectAsState(initial = RatedMoviesUiState.Initial)
+
+    LaunchedEffect(visible) {
+        animatableHeight.animateTo(
+            if (visible) 200f else 0f,
+            animationSpec = tween(durationMillis = 300)
+        )
+    }
+
+    ModalBottomSheetLayout(
+        sheetContent = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val numbers = mutableListOf<Double>()
+                var number = 1.0
+                while (number <= 10.0) {
+                    numbers.add(number)
+                    number += 0.5
+                }
+
+                DecimalSlider(detailsMoviesViewModel)
+
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    Button(
+                        onClick = {
+                            detailsMoviesViewModel.hideModal()
+                            detailsMoviesViewModel.onButtonClick()
+                            val jsonArgs = Uri.encode(Gson().toJson(movie))
+                            navController.navigate(
+                                route = Screen.RatedScreen.route + "/$jsonArgs"
+                            )
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color.Black
+                        )
+                    ) {
+                        TextInterBold(
+                            text = "Rate",
+                            color = colorResource(id = R.color.text_bottom_rated)
+                        )
+                    }
+                }
+
+
+                when (uiState) {
+                    RatedMoviesUiState.Initial -> {}
+                    RatedMoviesUiState.Loading -> {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.padding(all = 8.dp)
+                        ) {
+                            CenteredCircularProgressIndicator()
+                        }
+                    }
+
+                    is RatedMoviesUiState.Success -> {}
+
+                    is RatedMoviesUiState.Error -> {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.padding(all = 8.dp)
+                        ) {
+                            Text(
+                                (uiState as RatedMoviesUiState.Error).errorMessage,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Expanded),
+        sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.8f))
+                .padding(16.dp)
+        )
     }
 }
 
@@ -139,7 +277,6 @@ fun DetailsContainer(movie: Movies, popularMoviesViewModel: PopularMoviesViewMod
                 )
             }
         }
-
     }
 }
 
@@ -153,6 +290,8 @@ fun ClickableContainer(
     detailsMoviesViewModel.setMovie(movie)
 
     val topButtonColor by detailsMoviesViewModel.topButtonColor.observeAsState()
+    val topButtonTextColor by detailsMoviesViewModel.topButtonTextColor.observeAsState()
+
     val buttonTopText by detailsMoviesViewModel.buttonTopText.observeAsState()
     val buttonBottomText by detailsMoviesViewModel.buttonBottomText.observeAsState()
 
@@ -163,11 +302,7 @@ fun ClickableContainer(
             modifier = Modifier
                 .weight(1f)
                 .clickable {
-                    detailsMoviesViewModel.onButtonClick()
-                    val jsonArgs = Uri.encode(Gson().toJson(movie))
-                    navController.navigate(
-                        route = Screen.RatedScreen.route + "/$jsonArgs"
-                    )
+                    detailsMoviesViewModel.showModal()
                 }
         ) {
             Column {
@@ -182,7 +317,7 @@ fun ClickableContainer(
                             .padding(6.dp)
                             .align(Alignment.Center),
                         text = buttonTopText!!,
-                        color = Color.White
+                        color = colorResource(id = topButtonTextColor!!)
                     )
                 }
                 Box(
@@ -318,3 +453,35 @@ fun OverviewContainer(movie: Movies) {
     }
 }
 
+@Composable
+fun DecimalSlider(detailsMoviesViewModel: DetailsMoviesViewModel) {
+    var sliderValue by remember { mutableStateOf(5.0) }
+
+    Column {
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            TextJomhuriaRegular(
+                text = "%.1f".format(sliderValue),
+                fontSize = 50.sp,
+            )
+        }
+        Slider(
+            value = sliderValue.toFloat(),
+            onValueChange = { newValue ->
+                val roundedValue = (newValue * 2).roundToInt() / 2.0
+                sliderValue = roundedValue
+                detailsMoviesViewModel.setSliderValue(roundedValue)
+            },
+            valueRange = 1f..10f,
+            steps = 0,
+            colors = SliderDefaults.colors(
+                thumbColor = colorResource(id = R.color.green_top_bar_text),
+                activeTrackColor = colorResource(id = R.color.green_top_bar),
+                inactiveTrackColor = colorResource(id = R.color.background_slider)
+            )
+
+        )
+    }
+}

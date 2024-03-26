@@ -27,7 +27,7 @@ data class Favourites(
     @ColumnInfo(name = "vote_average") val vote_average: Double,
     @ColumnInfo(name = "vote_count") val vote_count: Int,
     @ColumnInfo(name = "rating") val rating: Double,
-    )
+)
 
 data class rawAddFavourites(
     val mediaType: String,

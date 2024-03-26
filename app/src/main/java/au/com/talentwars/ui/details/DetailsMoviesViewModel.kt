@@ -17,6 +17,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -35,12 +37,19 @@ class DetailsMoviesViewModel @Inject constructor(
 
     private val _uiStateRatedMovie: MutableStateFlow<RatedMoviesUiState> =
         MutableStateFlow(RatedMoviesUiState.Initial)
+    val uiStateRatedMovie: StateFlow<RatedMoviesUiState> = _uiStateRatedMovie.asStateFlow()
+
+    private val _modalVisible = MutableStateFlow(false)
+    val modalVisible: StateFlow<Boolean> = _modalVisible
 
     private lateinit var movie: Movies
     private lateinit var movieDetails: DetailsMovie
 
     private var _topButtonColor = MutableLiveData<Int>(R.color.background_top_rate)
     val topButtonColor: LiveData<Int> = _topButtonColor
+
+    private var _topButtonTextColor = MutableLiveData<Int>(R.color.white)
+    val topButtonTextColor: LiveData<Int> = _topButtonTextColor
 
     private var _buttonTopText = MutableLiveData<String>("Rate it myself >")
     val buttonTopText: LiveData<String> = _buttonTopText
@@ -51,8 +60,24 @@ class DetailsMoviesViewModel @Inject constructor(
     //TODO("variable temp to avoid call server")
     var rated = false
 
+    private val _sliderValue = MutableStateFlow(50.0)
+    val sliderValue: StateFlow<Double> = _sliderValue
+
+    fun setSliderValue(value: Double) {
+        _sliderValue.value = value
+    }
+
     private var genresList = mutableListOf<Genres>()
 
+
+    fun showModal() {
+        _modalVisible.value = true
+    }
+
+    // Method to hide the modal
+    fun hideModal() {
+        _modalVisible.value = false
+    }
 
     init {
         loadPopularGenres()
@@ -75,6 +100,7 @@ class DetailsMoviesViewModel @Inject constructor(
     fun onButtonClick() {
         viewModelScope.launch {
             if (!rated) {
+                _uiState.value = DetailsMoviesUiState.Loading
                 rateMovie()
             } else {
                 toggleButton()
@@ -108,8 +134,9 @@ class DetailsMoviesViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             ratesRepository.rateMovieFromServer(
                 movie.id,
+                sliderValue.value,
                 onSuccess = { ratedMovie ->
-                    rated=true
+                    rated = true
                     _uiStateRatedMovie.value = RatedMoviesUiState.Success(ratedMovie)
                     toggleButton()
                 },
@@ -124,13 +151,19 @@ class DetailsMoviesViewModel @Inject constructor(
         GlobalScope.launch() {
             withContext(Dispatchers.Main) {
                 val initialTopButtonColor = R.color.background_top_rate
-                val toggledTopButtonColorResource = R.color.background_top_rate_pressed
+                val initialTopButtonTextColor = R.color.white
+
+                val toggledTopButtonColorResource = R.color.background_top_rate_rating_now
+                val toggledTopButtonTextColorResource = R.color.background_top_rate_rating_now_text
+
+                _topButtonTextColor.value =
+                    if (topButtonTextColor.value == initialTopButtonTextColor) toggledTopButtonTextColorResource else initialTopButtonTextColor
                 _topButtonColor.value =
                     if (_topButtonColor.value == initialTopButtonColor) toggledTopButtonColorResource else initialTopButtonColor
                 _buttonTopText.value =
-                    if (_buttonTopText.value == "Rate it myself >") "You’ve rated this 8.5" else "Rate it myself >"
+                    if (_buttonTopText.value == "Rate it myself >") "Rating Now" else "Rate it myself >"
                 _buttonBottomText.value =
-                    if (_buttonBottomText.value == "add personal rating") "click to reset" else "add personal rating"
+                    if (_buttonBottomText.value == "using modal") "click to reset" else "add personal rating"
             }
         }
     }
