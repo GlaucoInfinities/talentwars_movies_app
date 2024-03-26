@@ -157,7 +157,7 @@ fun BottomSheetContent(
                     number += 0.5
                 }
 
-                DecimalSlider(detailsMoviesViewModel)
+                RatingSlider(detailsMoviesViewModel)
 
                 Box(
                     modifier = Modifier.fillMaxWidth(),
@@ -169,7 +169,7 @@ fun BottomSheetContent(
                             detailsMoviesViewModel.onButtonClick()
                             val jsonArgs = Uri.encode(Gson().toJson(movie))
                             navController.navigate(
-                                route = Screen.RatedScreen.route + "/$jsonArgs"
+                                route = Screen.RatedScreen.route + "/$jsonArgs/${detailsMoviesViewModel.sliderValue.value}"
                             )
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -452,7 +452,7 @@ fun OverviewContainer(movie: Movies) {
 }
 
 @Composable
-fun DecimalSlider(detailsMoviesViewModel: DetailsMoviesViewModel) {
+fun RatingSlider(detailsMoviesViewModel: DetailsMoviesViewModel) {
     var sliderValue by remember { mutableStateOf(5.0) }
 
     Column {

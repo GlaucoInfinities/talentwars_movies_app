@@ -19,12 +19,11 @@ import androidx.compose.ui.unit.sp
 import au.com.talentwars.R
 
 @Composable
-fun RateClickable(
-) {
+fun RateClickable(rating: String) {
 
     Column(
         modifier = Modifier
-            .width(155.dp)
+            .width(170.dp)
             .clickable {
             }
     ) {
@@ -39,7 +38,7 @@ fun RateClickable(
                     modifier = Modifier
                         .padding(6.dp)
                         .align(Alignment.Center),
-                    text = "You’ve rated this 0",
+                    text = "You’ve rated this $rating",
                     color = Color.White
                 )
             }

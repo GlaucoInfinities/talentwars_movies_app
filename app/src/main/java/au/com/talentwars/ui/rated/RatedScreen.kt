@@ -36,7 +36,8 @@ import au.com.talentwars.ui.components.TextJomhuriaRegular
 @Composable
 fun RatedScreen(
     navController: NavHostController,
-    movie: Movies
+    movie: Movies,
+    rating: String
 ) {
     Box(
         modifier = Modifier
@@ -45,7 +46,7 @@ fun RatedScreen(
     ) {
 
         Header(navController, movie = movie)
-        CenterContainer(navController, movie = movie)
+        CenterContainer(navController, movie = movie,rating)
     }
 }
 
@@ -73,7 +74,7 @@ fun Header(navController: NavHostController, movie: Movies) {
 }
 
 @Composable
-fun CenterContainer(navController: NavHostController, movie: Movies) {
+fun CenterContainer(navController: NavHostController, movie: Movies, rating: String) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -105,7 +106,7 @@ fun CenterContainer(navController: NavHostController, movie: Movies) {
                 modifier = Modifier
                     .padding(top = 27.dp),
             ) {
-                RateClickable()
+                RateClickable(rating)
             }
 
             GoToFavourites(navController)

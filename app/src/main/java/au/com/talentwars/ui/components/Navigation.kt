@@ -25,9 +25,13 @@ fun Navigation(startDestination: String) {
         }
         composable(
             route = Screen.RatedScreen.route +
-                    "/{${Arguments.MOVIE_KEY}}",
+                    "/{${Arguments.MOVIE_KEY}}/{${Arguments.RATING}}",
             arguments = listOf(
                 navArgument(Arguments.MOVIE_KEY) {
+                    type = NavType.StringType
+                    nullable = false
+                },
+                navArgument(Arguments.RATING) {
                     type = NavType.StringType
                     nullable = false
                 }
@@ -35,7 +39,9 @@ fun Navigation(startDestination: String) {
         ) { entry ->
             val argument = entry.arguments?.getString(Arguments.MOVIE_KEY)
             val movie = Gson().fromJson(argument, Movies::class.java)
-            RatedScreen(navController, movie)
+            val argumentRated = entry.arguments?.getString(Arguments.RATING)
+
+            RatedScreen(navController, movie,argumentRated!!)
         }
         composable(
             route = Screen.DetailScreen.route +
@@ -56,6 +62,8 @@ fun Navigation(startDestination: String) {
 
 object Arguments {
     const val MOVIE_KEY = "movie"
+    const val RATING = "rating"
+
 }
 
 sealed class Screen(val route: String) {
