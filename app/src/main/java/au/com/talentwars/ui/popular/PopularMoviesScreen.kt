@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import au.com.talentwars.R
-import au.com.talentwars.ui.PopularMoviesUiState
+import au.com.talentwars.ui.MoviesUiState
 import au.com.talentwars.ui.components.CenteredCircularProgressIndicator
 import au.com.talentwars.ui.components.Screen
 import au.com.talentwars.ui.components.TextFieldInterBold
@@ -78,11 +78,11 @@ fun InitLoadingPage(
     searchText: TextFieldValue,
     navController: NavHostController
 ) {
-    val uiState by viewModel.uiState.collectAsState(initial = PopularMoviesUiState.Initial)
+    val uiState by viewModel.uiState.collectAsState(initial = MoviesUiState.Initial)
 
     when (uiState) {
-        PopularMoviesUiState.Initial -> {}
-        PopularMoviesUiState.Loading -> {
+        MoviesUiState.Initial -> {}
+        MoviesUiState.Loading -> {
             Box(
                 contentAlignment = Alignment.Center, modifier = Modifier.padding(all = 8.dp)
             ) {
@@ -90,14 +90,14 @@ fun InitLoadingPage(
             }
         }
 
-        is PopularMoviesUiState.Success -> {
+        is MoviesUiState.Success -> {
             ListMovies(uiState, searchText = searchText, navController)
         }
 
-        is PopularMoviesUiState.Error -> {
+        is MoviesUiState.Error -> {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(all = 8.dp)) {
                 Text(
-                    (uiState as PopularMoviesUiState.Error).errorMessage,
+                    (uiState as MoviesUiState.Error).errorMessage,
                     textAlign = TextAlign.Center
                 )
             }
@@ -106,11 +106,11 @@ fun InitLoadingPage(
 }
 @Composable
 fun ListMovies(
-    uiState: PopularMoviesUiState,
+    uiState: MoviesUiState,
     searchText: TextFieldValue, navController: NavHostController
 ) {
     val viewModel: PopularMoviesViewModel = hiltViewModel()
-    val list = (uiState as PopularMoviesUiState.Success).movies
+    val list = (uiState as MoviesUiState.Success).movies
 
     LazyColumn(
         modifier = Modifier.padding(top = 10.dp, bottom = 5.dp),

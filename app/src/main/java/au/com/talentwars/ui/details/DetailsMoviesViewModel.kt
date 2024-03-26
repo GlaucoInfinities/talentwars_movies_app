@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import au.com.talentwars.R
 import au.com.talentwars.data.DetailsRepository
-import au.com.talentwars.data.FavouritesRepository
 import au.com.talentwars.data.GenresRepository
+import au.com.talentwars.data.RatesRepository
 import au.com.talentwars.data.model.DetailsMovie
 import au.com.talentwars.data.model.Genres
 import au.com.talentwars.data.model.Movies
@@ -24,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailsMoviesViewModel @Inject constructor(
     private val detailsRepository: DetailsRepository,
-    private val favouritesRepository: FavouritesRepository,
+    private val ratesRepository: RatesRepository,
     private val genresRepository: GenresRepository
 
 
@@ -106,7 +106,7 @@ class DetailsMoviesViewModel @Inject constructor(
     private fun rateMovie() {
         _uiStateRatedMovie.value = RatedMoviesUiState.Loading
         viewModelScope.launch(Dispatchers.IO) {
-           /* favouritesRepository.rateMovieFromServer(
+            ratesRepository.rateMovieFromServer(
                 movie.id,
                 onSuccess = { ratedMovie ->
                     rated=true
@@ -116,7 +116,7 @@ class DetailsMoviesViewModel @Inject constructor(
                 onError = { error ->
                     _uiStateRatedMovie.value = RatedMoviesUiState.Error(error)
                 }
-            )*/
+            )
         }
     }
 

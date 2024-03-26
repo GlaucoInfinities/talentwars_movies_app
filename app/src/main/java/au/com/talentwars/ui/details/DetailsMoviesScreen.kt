@@ -1,5 +1,6 @@
 package au.com.talentwars.ui.details
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,14 +12,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -28,7 +27,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,6 +34,7 @@ import androidx.navigation.NavHostController
 import au.com.talentwars.R
 import au.com.talentwars.data.model.Genres
 import au.com.talentwars.data.model.Movies
+import au.com.talentwars.ui.components.ButtonBack
 import au.com.talentwars.ui.components.CachedAsyncImage
 import au.com.talentwars.ui.components.FavouritesStar
 import au.com.talentwars.ui.components.ImageCardRoundedTopEnd
@@ -45,6 +44,7 @@ import au.com.talentwars.ui.components.TextInterBold
 import au.com.talentwars.ui.components.TextInterRegular
 import au.com.talentwars.ui.components.TextJomhuriaRegular
 import au.com.talentwars.ui.popular.PopularMoviesViewModel
+import com.google.gson.Gson
 
 @Composable
 fun DetailsMoviesScreen(
@@ -53,32 +53,36 @@ fun DetailsMoviesScreen(
 ) {
 
     val popularMoviesViewModel: PopularMoviesViewModel = hiltViewModel()
+    val detailsMoviesViewModel: DetailsMoviesViewModel = hiltViewModel()
+    detailsMoviesViewModel.setMovie(movie)
 
-    Column(
+    Box(
         Modifier
             .background(Color.White),
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        Header(movie = movie, navController)
-
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 32.dp),
-            verticalArrangement = Arrangement.Top
-        ) {
-            DetailsContainer(movie, popularMoviesViewModel)
+        Column {
+            Header(movie = movie, navController)
 
             Column(
                 modifier = Modifier
-                    .offset(x = (-0).dp, y = (-28).dp),
+                    .padding(horizontal = 32.dp),
                 verticalArrangement = Arrangement.Top
-            )
-            {
-                ClickableContainer(navController, movie)
-                OverviewContainer(movie)
+            ) {
+                DetailsContainer(movie, popularMoviesViewModel)
+
+                Column(
+                    modifier = Modifier
+                        .offset(x = (-0).dp, y = (-28).dp),
+                    verticalArrangement = Arrangement.Top
+                )
+                {
+                    // RateClickable(navController)
+                    ClickableContainer(navController, movie)
+                    OverviewContainer(movie)
+                }
             }
         }
+
     }
 }
 
@@ -92,28 +96,15 @@ fun DetailsContainer(movie: Movies, popularMoviesViewModel: PopularMoviesViewMod
         Row(
         ) {
             Column(
-                modifier = Modifier
-                    .width(140.dp),
             ) {
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(topEnd = 35.dp))
-                        .width(131.dp)
-                        .height(172.dp)
-                        .background(Color.White),
-                ) {
-                    ImageCardRoundedTopEnd(
-                        urlImage = movie.poster_path,
-                        modifier = Modifier
-                            .width(127.dp)
-                            .height(168.dp)
-                            .padding(top = 5.dp, start = 5.dp),
-                    )
-                }
+                ImageCardRoundedTopEnd(
+                    urlImage = movie.poster_path,
+                )
             }
             Column(
                 modifier = Modifier
                     .padding(5.dp, 0.dp, 0.dp, 8.dp)
+                    .weight(1f)
                     .align(alignment = Alignment.Bottom)
             )
             {
@@ -173,6 +164,10 @@ fun ClickableContainer(
                 .weight(1f)
                 .clickable {
                     detailsMoviesViewModel.onButtonClick()
+                    val jsonArgs = Uri.encode(Gson().toJson(movie))
+                    navController.navigate(
+                        route = Screen.RatedScreen.route + "/$jsonArgs"
+                    )
                 }
         ) {
             Column {
@@ -287,7 +282,10 @@ fun Header(movie: Movies, navController: NavHostController) {
                     .offset(x = (-0).dp, y = (-11).dp),
                 verticalArrangement = Arrangement.Top
             ) {
-                FavouritesStar(onClick = { }, modifier = Modifier.padding(start = 152.dp), movie=movie)
+                FavouritesStar(
+                    modifier = Modifier.padding(start = 152.dp),
+                    movie = movie
+                )
             }
         }
     }
@@ -318,40 +316,5 @@ fun OverviewContainer(movie: Movies) {
         )
         TextInterRegular(movie.overview)
     }
-
 }
 
-@Composable
-fun ButtonBack(backStack: NavHostController) {
-    Row(
-        modifier = Modifier.padding(top = 31.dp, start = 30.dp)
-    ) {
-        Button(
-            onClick = { backStack.popBackStack() },
-            colors = ButtonDefaults.textButtonColors(
-                backgroundColor = Color.White.copy(alpha = 0.3f),
-            ),
-            modifier = Modifier.height(26.dp),
-            shape = RoundedCornerShape(60.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_back_24),
-                    contentDescription = "Back",
-                    tint = Color.White,
-                    modifier = Modifier
-                        .size(18.dp)
-                        .padding(start = 9.dp),
-                )
-                TextInterRegular(
-                    modifier = Modifier.padding(start = 8.dp, end = 9.dp),
-                    text = "Back to Search",
-                    fontSize = 10.sp,
-                    color = colorResource(id = R.color.white)
-                )
-            }
-        }
-    }
-}

@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-
 data class RequestFavouritesMovies(
     val page: Int,
     val results: List<Favourites>,
@@ -26,8 +25,9 @@ data class Favourites(
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "video") val video: Boolean,
     @ColumnInfo(name = "vote_average") val vote_average: Double,
-    @ColumnInfo(name = "vote_count") val vote_count: Int
-)
+    @ColumnInfo(name = "vote_count") val vote_count: Int,
+    @ColumnInfo(name = "rating") val rating: Double,
+    )
 
 data class rawAddFavourites(
     val mediaType: String,

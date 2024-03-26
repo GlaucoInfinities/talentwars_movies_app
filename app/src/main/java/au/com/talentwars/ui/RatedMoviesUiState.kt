@@ -1,6 +1,6 @@
 package au.com.talentwars.ui
 
-import au.com.talentwars.data.model.RequestRatedMovie
+import au.com.talentwars.data.model.RequestPost
 
 sealed interface RatedMoviesUiState {
     /**
@@ -16,7 +16,7 @@ sealed interface RatedMoviesUiState {
     /**
      * Rated Movies has been loaded
      */
-    data class Success(val ratedMovie: RequestRatedMovie) : RatedMoviesUiState
+    data class Success(val ratedMovie: RequestPost) : RatedMoviesUiState
 
     /**
      * There was an error

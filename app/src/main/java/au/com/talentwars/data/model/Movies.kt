@@ -1,7 +1,7 @@
 package au.com.talentwars.data.model
 
 
-data class RequestPopularMovies(
+data class RequestMovies(
     val page: Int,
     val results: List<Movies>,
     val totalPages: Int,
@@ -38,6 +38,7 @@ fun Movies.toFavourites(): Favourites {
         release_date = this.release_date,
         title = this.title,
         video = this.video,
+        rating=0.0,
         vote_average = this.vote_average,
         vote_count = this.vote_count
     )

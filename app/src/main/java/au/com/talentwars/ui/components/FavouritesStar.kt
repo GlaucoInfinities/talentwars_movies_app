@@ -18,9 +18,8 @@ import au.com.talentwars.ui.favourites.FavouritesViewModel
 
 @Composable
 fun FavouritesStar(
-    onClick: () -> Unit,
+    disableClick: Boolean? = false,
     modifier: Modifier? = Modifier,
-    rated: Boolean? = false,
     movie: Movies
 ) {
 
@@ -30,15 +29,12 @@ fun FavouritesStar(
     val resourceId = viewModel.getImageResource()
     val bitmap: Bitmap = BitmapFactory.decodeResource(context.resources, resourceId)
 
-    //val favouritesState by viewModel.favouritesState.observeAsState()
     LaunchedEffect(viewModel) {
         viewModel.checkFavourites(movie)
     }
 
-
-
     IconButton(
-        onClick = { viewModel.onRateStarClicked(movie) },
+        onClick = {if (disableClick == true) null else { viewModel.onRateStarClicked(movie) }},
         modifier = modifier ?: Modifier,
     ) {
         val imageBitmap = bitmap.asImageBitmap()

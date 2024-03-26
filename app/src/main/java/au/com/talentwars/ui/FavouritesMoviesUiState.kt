@@ -14,9 +14,9 @@ sealed interface FavouritesMoviesUiState {
     data object Loading : FavouritesMoviesUiState
 
     /**
-     * Favourites Movies has been loaded
+     * Popular Movies has been loaded
      */
-    data class Success(val favourites: List<Favourites>) : FavouritesMoviesUiState
+    data class Success(val movies: List<Favourites>) : FavouritesMoviesUiState
 
     /**
      * There was an error

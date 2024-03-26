@@ -8,8 +8,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import au.com.talentwars.data.model.Movies
 import au.com.talentwars.ui.details.DetailsMoviesScreen
-import au.com.talentwars.ui.popular.PopularMoviesScreen
 import au.com.talentwars.ui.favourites.FavouritesScreen
+import au.com.talentwars.ui.popular.PopularMoviesScreen
+import au.com.talentwars.ui.rated.RatedScreen
 import com.google.gson.Gson
 
 @Composable
@@ -21,6 +22,20 @@ fun Navigation(startDestination: String) {
         }
         composable(route = Screen.FavouritesScreen.route) {
             FavouritesScreen(navController)
+        }
+        composable(
+            route = Screen.RatedScreen.route +
+                    "/{${Arguments.MOVIE_KEY}}",
+            arguments = listOf(
+                navArgument(Arguments.MOVIE_KEY) {
+                    type = NavType.StringType
+                    nullable = false
+                }
+            )
+        ) { entry ->
+            val argument = entry.arguments?.getString(Arguments.MOVIE_KEY)
+            val movie = Gson().fromJson(argument, Movies::class.java)
+            RatedScreen(navController, movie)
         }
         composable(
             route = Screen.DetailScreen.route +
@@ -47,4 +62,6 @@ sealed class Screen(val route: String) {
     object PopularMoviesScreen : Screen("popular_movies_screen")
     object FavouritesScreen : Screen("favourites_screen")
     object DetailScreen : Screen("detail_screen")
+    object RatedScreen : Screen("rated_screen")
+
 }

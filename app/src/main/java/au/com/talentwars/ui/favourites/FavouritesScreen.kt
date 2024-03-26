@@ -1,7 +1,9 @@
 package au.com.talentwars.ui.favourites
 
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +30,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -38,6 +43,7 @@ import androidx.navigation.NavHostController
 import au.com.talentwars.R
 import au.com.talentwars.ui.FavouritesMoviesUiState
 import au.com.talentwars.ui.components.CenteredCircularProgressIndicator
+import au.com.talentwars.ui.components.ImageCardRoundedTopEnd
 import au.com.talentwars.ui.components.TextInterRegular
 import au.com.talentwars.ui.components.TextJomhuriaRegular
 
@@ -150,25 +156,26 @@ fun SearchForMore(navController: NavHostController) {
 
 @Composable
 fun ListFavourites(uiState: FavouritesMoviesUiState) {
-    val list = (uiState as FavouritesMoviesUiState.Success).favourites
+    val list = (uiState as FavouritesMoviesUiState.Success).movies
+    val context = LocalContext.current
+
+    val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.ic_rated_star)
+    val painter = BitmapPainter(bitmap.asImageBitmap())
 
     LazyRow(
         modifier = Modifier.padding(start = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(30.dp),
     ) {
-        items(list) { item ->
+        items(list){item ->
             Column(
                 Modifier
                     .background(Color.White)
                     .offset(x = (0).dp, y = (-9).dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-//                ImageCardRoundedTopEnd(
-//                    item.poster_path,
-//                    modifier = Modifier
-//                        .width(120.dp)
-//                        .height(166.dp),
-//                )
+                ImageCardRoundedTopEnd(
+                    item.poster_path,
+                )
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -176,15 +183,21 @@ fun ListFavourites(uiState: FavouritesMoviesUiState) {
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    //RateStar(
-                      //  onClick = { }, rated = true
-                    //)
+                    Icon(
+                        painter = painter,
+                        contentDescription = "",
+                        tint = Color.Unspecified,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .clickable {  },
+                    )
+
                     TextInterRegular(text = "My Rating", modifier = Modifier.padding(top = 5.dp))
-//                    TextInterRegular(
-//                        text = item.rating.toString(),
-//                        fontSize = 20.sp,
-//                        modifier = Modifier.padding(top = 10.dp)
-//                    )
+                    TextInterRegular(
+                    text = item.rating.toString(),
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(top = 10.dp)
+                    )
                 }
             }
         }

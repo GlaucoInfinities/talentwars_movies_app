@@ -68,6 +68,25 @@ class FavouritesRepository @Inject constructor(private val favouritesDao: Favour
         }
     }
 
+    suspend fun loadFavouritesFromServer(
+        onSuccess: (List<Favourites>) -> Unit, onError: (String) -> Unit
+    ) {
+        try {
+            val request = service.requestFavoriteMoviesFromSourceResponse(ACCOUNT_ID)
+
+            if (request.isSuccessful) {
+                val complete = request.body()
+                complete?.let { onSuccess(it.results) }
+            } else {
+                onError("Could not load ${request.errorBody()?.string()}")
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            onError(e.message ?: "Error")
+        }
+    }
+
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
     suspend fun saveFavourites(favourites: Favourites) {

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import au.com.talentwars.R
 import au.com.talentwars.data.FavouritesRepository
+import au.com.talentwars.data.model.Favourites
 import au.com.talentwars.data.model.Movies
 import au.com.talentwars.data.model.toFavourites
 import au.com.talentwars.ui.FavouritesMoviesUiState
@@ -26,31 +27,31 @@ class FavouritesViewModel @Inject constructor(
         MutableStateFlow(FavouritesMoviesUiState.Initial)
     val uiState: StateFlow<FavouritesMoviesUiState> = _uiState.asStateFlow()
 
-    //private val favouritesList = mutableListOf<Favourites>()
-
-    val favouritesState = mutableStateOf(false)
+    private val favouritesList = mutableListOf<Favourites>()
+    private val favouritesState = mutableStateOf(false)
 
     private val imageResources = mutableStateListOf(
-        R.drawable.ic_rate_star, // Index 0: Unrated
-        R.drawable.ic_rated_star // Index 1: Rated
+        R.drawable.ic_rate_star,
+        R.drawable.ic_rated_star
     )
 
     init {
         _uiState.value = FavouritesMoviesUiState.Loading
-        //loadFavouritesMovies()
+        loadFavouritesMovies()
     }
 
     private fun loadFavouritesMovies() {
         viewModelScope.launch(Dispatchers.IO) {
-            /* favouritesRepository.loadFavouritesFromServer(
+             favouritesRepository.loadFavouritesFromServer(
                  onSuccess = { favourites ->
                      favouritesList.addAll(favourites)
                      _uiState.value = FavouritesMoviesUiState.Success(favouritesList.toList())
+                     //updateListFavourites(favourites)
                  },
                  onError = { error ->
                      _uiState.value = FavouritesMoviesUiState.Error(error)
                  }
-             )*/
+             )
         }
     }
 
@@ -95,4 +96,12 @@ class FavouritesViewModel @Inject constructor(
     fun getImageResource(): Int {
         return imageResources[if (favouritesState.value) 1 else 0]
     }
+
+   /* private fun updateListFavourites(favourites: List<Favourites>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            favourites.forEach { favourite ->
+                favouritesRepository.saveFavourites(favourite)
+            }
+        }
+    }*/
 }

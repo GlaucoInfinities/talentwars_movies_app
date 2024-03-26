@@ -9,7 +9,7 @@ import au.com.talentwars.data.GenresRepository
 import au.com.talentwars.data.MoviesRepository
 import au.com.talentwars.data.model.Genres
 import au.com.talentwars.data.model.Movies
-import au.com.talentwars.ui.PopularMoviesUiState
+import au.com.talentwars.ui.MoviesUiState
 import au.com.talentwars.util.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -25,9 +25,9 @@ class PopularMoviesViewModel @Inject constructor(
     private val genresRepository: GenresRepository
 ) : ViewModel() {
 
-    private val _uiState: MutableStateFlow<PopularMoviesUiState> =
-        MutableStateFlow(PopularMoviesUiState.Initial)
-    val uiState: StateFlow<PopularMoviesUiState> = _uiState.asStateFlow()
+    private val _uiState: MutableStateFlow<MoviesUiState> =
+        MutableStateFlow(MoviesUiState.Initial)
+    val uiState: StateFlow<MoviesUiState> = _uiState.asStateFlow()
 
     private var currentPage = 1
     var isLoading = false
@@ -46,7 +46,7 @@ class PopularMoviesViewModel @Inject constructor(
         }
     }
     init {
-        _uiState.value = PopularMoviesUiState.Loading
+        _uiState.value = MoviesUiState.Loading
         loadPopularGenres()
     }
 
@@ -73,11 +73,11 @@ class PopularMoviesViewModel @Inject constructor(
                 page,
                 onSuccess = { movies ->
                     moviesList.addAll(movies)
-                    _uiState.value = PopularMoviesUiState.Success(moviesList.toList())
+                    _uiState.value = MoviesUiState.Success(moviesList.toList())
                     isLoading = false
                 },
                 onError = { error ->
-                    _uiState.value = PopularMoviesUiState.Error(error)
+                    _uiState.value = MoviesUiState.Error(error)
                     isLoading = false
                 }
             )
@@ -90,11 +90,11 @@ class PopularMoviesViewModel @Inject constructor(
                 searchText.value.text,
                 onSuccess = { movies ->
                     moviesList.addAll(movies)
-                    _uiState.value = PopularMoviesUiState.Success(moviesList.toList())
+                    _uiState.value = MoviesUiState.Success(moviesList.toList())
                     isLoading = false
                 },
                 onError = { error ->
-                    _uiState.value = PopularMoviesUiState.Error(error)
+                    _uiState.value = MoviesUiState.Error(error)
                     isLoading = false
                 }
             )

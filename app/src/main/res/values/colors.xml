@@ -9,6 +9,7 @@
 
     <color name="green_top_bar">#FF8DEAA2</color>
     <color name="green_top_bar_text">#FF347868</color>
+    <color name="green_background">#FFA5E8B4</color>
     <color name="black">#FF000000</color>
     <color name="grey_200">#FF959595</color>
     <color name="grey_100">#FFE6E6E6</color>
@@ -20,6 +21,7 @@
     <color name="background_arrow_back">#FF995630</color>
 
     <color name="text_bottom_rate">#FFD7BA8E</color>
+    <color name="text_bottom_rated">#FF6FAB3F</color>
     <color name="beige_200">#FFFFF3D3</color>
     <color name="goldenrod_400">#FFB98E1E</color>
     <color name="light_gray_100">#FFEFEFEF</color>
