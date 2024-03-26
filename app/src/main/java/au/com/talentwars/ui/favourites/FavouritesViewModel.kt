@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import au.com.talentwars.R
 import au.com.talentwars.data.FavouritesRepository
+import au.com.talentwars.data.RatesRepository
 import au.com.talentwars.data.model.Favourites
 import au.com.talentwars.data.model.Movies
 import au.com.talentwars.data.model.toFavourites
@@ -21,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FavouritesViewModel @Inject constructor(
     private val favouritesRepository: FavouritesRepository,
+    private val ratesRepository: RatesRepository,
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<FavouritesMoviesUiState> =
@@ -28,6 +30,8 @@ class FavouritesViewModel @Inject constructor(
     val uiState: StateFlow<FavouritesMoviesUiState> = _uiState.asStateFlow()
 
     private val favouritesList = mutableListOf<Favourites>()
+    private val ratesList = mutableListOf<Favourites>()
+
     private val favouritesState = mutableStateOf(false)
 
     private val imageResources = mutableStateListOf(
@@ -37,7 +41,7 @@ class FavouritesViewModel @Inject constructor(
 
     init {
         _uiState.value = FavouritesMoviesUiState.Loading
-        loadFavouritesMovies()
+        loadRatesMovies()
     }
 
     private fun loadFavouritesMovies() {
@@ -46,12 +50,24 @@ class FavouritesViewModel @Inject constructor(
                  onSuccess = { favourites ->
                      favouritesList.addAll(favourites)
                      _uiState.value = FavouritesMoviesUiState.Success(favouritesList.toList())
-                     //updateListFavourites(favourites)
+                     updateListFavourites()
                  },
                  onError = { error ->
                      _uiState.value = FavouritesMoviesUiState.Error(error)
                  }
              )
+        }
+    }
+    private fun loadRatesMovies() {
+        viewModelScope.launch(Dispatchers.IO) {
+            ratesRepository.loadRatedFromServer(
+                onSuccess = { favourites ->
+                    ratesList.addAll(favourites)
+                    loadFavouritesMovies()
+                },
+                onError = { error ->
+                }
+            )
         }
     }
 
@@ -96,12 +112,12 @@ class FavouritesViewModel @Inject constructor(
     fun getImageResource(): Int {
         return imageResources[if (favouritesState.value) 1 else 0]
     }
-
-   /* private fun updateListFavourites(favourites: List<Favourites>) {
-        viewModelScope.launch(Dispatchers.IO) {
-            favourites.forEach { favourite ->
-                favouritesRepository.saveFavourites(favourite)
+    private fun updateListFavourites() {
+        favouritesList.forEach { favourite ->
+            val matchingRate = ratesList.find { rate -> rate.id == favourite.id }
+            matchingRate?.let {
+                favourite.rating = it.rating
             }
         }
-    }*/
+    }
 }

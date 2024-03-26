@@ -87,14 +87,12 @@ class FavouritesRepository @Inject constructor(private val favouritesDao: Favour
         }
     }
 
-    @Suppress("RedundantSuspendModifier")
     @WorkerThread
     suspend fun saveFavourites(favourites: Favourites) {
         withContext(Dispatchers.IO) {
             favouritesDao.insertFavourites(favourites)
         }
     }
-    @Suppress("RedundantSuspendModifier")
     @WorkerThread
     suspend fun deleteFavourites(favourites: Favourites) {
         withContext(Dispatchers.IO) {

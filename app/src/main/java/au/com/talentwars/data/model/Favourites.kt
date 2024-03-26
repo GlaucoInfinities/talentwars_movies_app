@@ -26,7 +26,7 @@ data class Favourites(
     @ColumnInfo(name = "video") val video: Boolean,
     @ColumnInfo(name = "vote_average") val vote_average: Double,
     @ColumnInfo(name = "vote_count") val vote_count: Int,
-    @ColumnInfo(name = "rating") val rating: Double,
+    @ColumnInfo(name = "rating") var rating: Double,
 )
 
 data class rawAddFavourites(

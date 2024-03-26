@@ -1,7 +1,7 @@
 package au.com.talentwars.data
 
 import au.com.talentwars.Constants
-import au.com.talentwars.data.model.Movies
+import au.com.talentwars.data.model.Favourites
 import au.com.talentwars.data.model.RequestPost
 import au.com.talentwars.data.network.ApiNetwork
 import au.com.talentwars.data.network.ApiService
@@ -20,7 +20,7 @@ class RatesRepository @Inject constructor() {
         ApiNetwork.makeRetrofitService().create(ApiService::class.java)
 
     suspend fun loadRatedFromServer(
-        onSuccess: (List<Movies>) -> Unit, onError: (String) -> Unit
+        onSuccess: (List<Favourites>) -> Unit, onError: (String) -> Unit
     ) {
         try {
             val request = service.requestRatedFromSourceResponse(Constants.ACCOUNT_ID)

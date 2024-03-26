@@ -100,7 +100,6 @@ fun DetailsMoviesScreen(
                         verticalArrangement = Arrangement.Top
                     )
                     {
-                        // RateClickable(navController)
                         ClickableContainer(navController, movie)
                         OverviewContainer(movie)
                     }
@@ -183,7 +182,6 @@ fun BottomSheetContent(
                         )
                     }
                 }
-
 
                 when (uiState) {
                     RatedMoviesUiState.Initial -> {}
